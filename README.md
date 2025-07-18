@@ -148,7 +148,7 @@ Rails標準機能（session）: レビュー投稿時の確認画面を実装し
 ## ■技術スタック
 
 ### 開発環境
-- **Ruby**: 3.3.5
+- **Ruby**: 3.3.6
 - **Ruby on Rails**: 7.2.1
 - **データベース**: PostgreSQL
 - **CSS Framework**: Tailwind CSS + daisyUI
