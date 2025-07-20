@@ -1,0 +1,20 @@
+<header class="bg-green-600 text-white shadow">
+  <div class="w-full px-6 py-3">
+    <div class="flex items-center justify-between">
+      <!-- ロゴ -->
+      <%= link_to root_path, class: "flex items-center space-x-2 text-xl font-bold" do %>
+        <span>MatchaTasty</span>
+      <% end %>
+      
+      <!-- ナビゲーション -->
+      <nav class="flex items-center space-x-4">
+        <%= link_to "ホーム", root_path, class: "hover:text-green-200" %>
+        <%= link_to "投稿一覧", "#", class: "hover:text-green-200" %>
+        <%= link_to "ランキング", "#", class: "hover:text-green-200" %>
+        <%= link_to "マイページ", "#", class: "hover:text-green-200" %>
+        <%= link_to "ログイン", "#", class: "hover:text-green-200" %>
+        <%= link_to "新規登録", "#", class: "hover:text-green-200" %>
+      </nav>
+    </div>
+  </div>
+</header>
