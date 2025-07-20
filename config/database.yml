@@ -23,7 +23,6 @@ default: &default
   password: password
 
 
-
 development:
   <<: *default
   database: myapp_development
