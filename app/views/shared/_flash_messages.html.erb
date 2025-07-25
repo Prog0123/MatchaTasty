@@ -1,0 +1,12 @@
+<% flash.each do |key, message| %>
+  <% alert_class = case key %>
+    <% when "notice" then "alert alert-info" %>
+    <% when "alert" then "alert alert-warning" %>
+    <% else "alert alert-error" %>
+  <% end %>
+  <div class="<%= alert_class %> shadow-lg my-2">
+    <div>
+      <span><%= message %></span>
+    </div>
+  </div>
+<% end %>
