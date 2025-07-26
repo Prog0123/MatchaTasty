@@ -1,0 +1,27 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  name: MyString
+  category: 1
+  store_name: MyString
+  description: MyText
+  richness: 1.5
+  bitterness: 1.5
+  sweetness: 1.5
+  aftertaste: 1.5
+  appearance: 1.5
+  total_rating: 1.5
+
+two:
+  user: two
+  name: MyString
+  category: 1
+  store_name: MyString
+  description: MyText
+  richness: 1.5
+  bitterness: 1.5
+  sweetness: 1.5
+  aftertaste: 1.5
+  appearance: 1.5
+  total_rating: 1.5
