@@ -8,7 +8,7 @@
 
       <!-- ナビゲーション -->
       <nav class="flex items-center space-x-4">
-        <%= link_to "投稿一覧", "#", class: "hover:text-green-200" %>
+        <%= link_to "投稿一覧", products_path, class: "hover:text-green-200" %>
         <%= link_to "ランキング", "#", class: "hover:text-green-200" %>
         <%= link_to "マイページ", "#", class: "hover:text-green-200" %>
         <% if user_signed_in? %>
