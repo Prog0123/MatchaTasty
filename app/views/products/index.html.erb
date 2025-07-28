@@ -1,0 +1,56 @@
+<div class="container mx-auto p-4 space-y-6">
+
+  <!-- ヘッダーと新規作成ボタン -->
+  <div class="flex justify-between items-center">
+    <h1 class="text-2xl font-bold">商品一覧</h1>
+    <%= link_to "＋ 新規投稿", new_product_path, class: "btn btn-primary" %>
+  </div>
+
+  <!-- 検索フォーム -->
+  <div class="card bg-base-100 p-4 shadow">
+    <%= search_form_for @q, url: products_path, method: :get, class: "flex flex-col md:flex-row gap-4" do |f| %>
+      <div>
+        <%= f.label :name_cont, "商品名", class: "label-text" %>
+        <%= f.search_field :name_cont, class: "input input-bordered w-full" %>
+      </div>
+      <div>
+        <%= f.label :category_eq, "カテゴリ", class: "label-text" %>
+        <%= f.select :category_eq, Product.categories.keys.map { |k| [k.titleize, k] }, { include_blank: "すべて" }, class: "select select-bordered w-full" %>
+      </div>
+      <div class="self-end">
+        <%= f.submit "検索", class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 商品が存在しない時 -->
+  <% if @products.empty? %>
+    <div class="alert alert-warning">商品が登録されていません。</div>
+  <% else %>
+    <!-- 商品一覧 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <% @products.each do |product| %>
+        <div class="card bg-base-100 shadow">
+          <figure class="h-40 overflow-hidden">
+            <% if product.image.attached? %>
+              <%= image_tag product.image, class: "w-full object-cover h-full" %>
+            <% else %>
+              <div class="flex items-center justify-center w-full h-full text-gray-400">画像なし</div>
+            <% end %>
+          </figure>
+          <div class="card-body p-4">
+            <h2 class="card-title">
+              <%= link_to product.name, product_path(product), class: "link link-hover" %>
+            </h2>
+            <p class="text-sm text-gray-500">カテゴリ: <%= product.category.titleize %></p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- ページネーション -->
+    <div class="mt-6">
+      <%= paginate @products %>
+    </div>
+  <% end %>
+</div>
