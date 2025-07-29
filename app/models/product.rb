@@ -3,7 +3,8 @@ class Product < ApplicationRecord
 
   # ActiveStorageで画像添付
   has_one_attached :image
-
+  # 追記
+  has_many :reviews, dependent: :destroy
   # タグ付け
   enum :category, { latte: 0, espresso: 1, matcha: 2, tea: 3 }
 

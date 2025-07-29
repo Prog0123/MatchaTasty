@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
   get "homes/top"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-  resources :products, only: [:index, :show, :new, :create]
+  resources :products, only: [ :index, :show, :new, :create ]
   # Topページ
   root "homes#top"
 
