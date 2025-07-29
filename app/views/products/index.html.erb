@@ -42,7 +42,7 @@
             <h2 class="card-title">
               <%= link_to product.name, product_path(product), class: "link link-hover" %>
             </h2>
-            <p class="text-sm text-gray-500">カテゴリ: <%= product.category.titleize %></p>
+            <p class="text-sm text-gray-500">カテゴリ: <%= product.category&.titleize || "カテゴリ未設定" %></p>
           </div>
         </div>
       <% end %>

@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
   # ログインページへリダイレクト
-  before_action :authenticate_user!, only: [:new, :create]
+  before_action :authenticate_user!, only: [ :new, :create ]
   def index
     @q = Product.ransack(params[:q])
     @products = @q.result.page(params[:page]).per(10)
@@ -22,6 +22,7 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.find(params[:id])
+    @reviews = @product.reviews.includes(:user).order(created_at: :desc)
   end
 
   private

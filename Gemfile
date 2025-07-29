@@ -62,4 +62,4 @@ gem "devise"
 
 gem "kaminari"
 
-gem 'ransack'
+gem "ransack"
