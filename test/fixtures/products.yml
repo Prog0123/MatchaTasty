@@ -3,7 +3,7 @@
 one:
   user: one
   name: MyString
-  category: 1
+  category: latte
   store_name: MyString
   description: MyText
   richness: 1.5
@@ -16,7 +16,7 @@ one:
 two:
   user: two
   name: MyString
-  category: 1
+  category: cake
   store_name: MyString
   description: MyText
   richness: 1.5
