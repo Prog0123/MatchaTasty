@@ -71,8 +71,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_29_124309) do
   create_table "reviews", force: :cascade do |t|
     t.bigint "product_id", null: false
     t.bigint "user_id", null: false
-    t.text "content"
+    t.text "comment"
     t.integer "rating"
+    t.float "score", null: false
+    t.integer "taste_level", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_reviews_on_product_id"

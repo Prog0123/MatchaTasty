@@ -14,4 +14,10 @@ class Product < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     %w[name category created_at updated_at]
   end
+
+  # 平均スコアを計算するメソッド
+  def average_score
+    return 0.0 if reviews.empty?
+    reviews.average(:score).round(1)
+  end
 end
