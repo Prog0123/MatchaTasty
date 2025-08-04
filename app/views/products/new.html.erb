@@ -1,4 +1,31 @@
+<!-- 投稿ページ -->
 <h1 class="text-2xl font-bold mb-4">商品を投稿する</h1>
+
+<!-- ステップバー -->
+<div class="max-w-2xl w-full mx-auto px-4">
+  <div class="bg-gray-200 rounded-full h-2.5 mb-2">
+    <div id="progress-bar" class="bg-primary h-2.5 rounded-full transition-all duration-300 ease-in-out" style="width: 0%;"></div>
+  </div>
+
+<!-- ステップ名 -->
+<div class="flex justify-between max-w-2xl mx-auto mb-8 px-4" id="step-labels">
+  <% steps = [
+    { number: 1, label: "商品情報", description: "商品名・店舗名を入力" },
+    { number: 2, label: "味覚評価", description: "5段階で評価" },
+    { number: 3, label: "コメント", description: "自由に感想を書く" }
+  ] %>
+
+  <% steps.each_with_index do |step, index| %>
+    <div class="flex flex-col items-center w-1/3">
+      <!-- ステップ番号アイコン -->
+      <div id="step-circle-<%= index + 1 %>" class="w-8 h-8 rounded-full border-2 border-primary text-primary flex items-center justify-center mb-2 font-bold">
+        <%= step[:number] %>
+      </div>
+      <div class="text-sm font-semibold text-gray-800"><%= step[:label] %></div>
+      <div class="text-xs text-gray-500 text-center mt-1"><%= step[:description] %></div>
+    </div>
+  <% end %>
+</div>
 
 <%= form_with model: @product, local: true, class: "space-y-4" do |f| %>
   <% if @product.errors.any? %>
@@ -11,22 +38,74 @@
     </div>
   <% end %>
 
-  <div class="form-control">
-    <%= f.label :name, "商品名", class: "label" %>
-    <%= f.text_field :name, class: "input input-bordered w-full" %>
+  <!-- ステップ1: 商品情報 -->
+<div class="max-w-xl mx-auto card bg-white shadow-md p-6 rounded-xl">
+  <div id="step-1" class="step-panel" data-step="1">
+    <div class="form-control">
+      <%= f.label :name, "商品名", class: "label" %>
+      <%= f.text_field :name, class: "input input-bordered w-full" %>
+    </div>
+
+    <div class="form-control">
+      <%= f.label :category, "カテゴリ", class: "label" %>
+      <%= f.select :category, Product.categories.keys.map { |k| [k.titleize, k] }, {}, class: "select select-bordered w-full" %>
+    </div>
+
+    <div class="form-control">
+      <%= f.label :image, "画像", class: "label" %>
+      <%= f.file_field :image, class: "file-input file-input-bordered w-full" %>
+    </div>
+
+    <div class="flex justify-end mt-4">
+      <button type="button" class="next-button btn btn-primary mt-4">次へ</button>
+    </div>
   </div>
 
-  <div class="form-control">
-    <%= f.label :category, "カテゴリ", class: "label" %>
-    <%= f.select :category, Product.categories.keys.map { |k| [k.titleize, k] }, {}, class: "select select-bordered w-full" %>
+<!-- ステップ2 & 3: レビュー入力 + コメント -->
+<%= f.fields_for :review do |rf| %>
+  <!-- ステップ2: 味覚評価 -->
+  <div id="step-2" class="step-panel hidden" data-step="2">
+    <div class="divider">レビュー情報</div>
+    <% [
+      ["濃さ（🍵）", :richness, "🍵"],
+      ["苦味（☕）", :bitterness, "☕"],
+      ["甘さ（🍬）", :sweetness, "🍬"],
+      ["後味（🎐）", :aftertaste, "🎐"],
+      ["見た目（👀）", :appearance, "👀"],
+      ["総合評価（★）", :score, "★"]
+    ].each do |label, name, symbol| %>
+      <div class="form-control mb-4" data-controller="stars" data-stars-name="product[review_attributes][<%= name %>]" data-stars-symbol="<%= symbol %>">
+        <label class="label"><%= label %></label>
+        <div class="flex space-x-1">
+          <% 5.times do |i| %>
+            <i class="star cursor-pointer text-2xl text-gray-400" data-action="click->stars#select" data-value="<%= i + 1 %>"><%= symbol %></i>
+          <% end %>
+        </div>
+        <%= rf.hidden_field name, data: { stars_target: "input" } %>
+      </div>
+    <% end %>
+
+    <!-- ステップ2のナビゲーション -->
+    <div class="flex justify-between mt-4">
+      <button type="button" class="prev-button btn btn-secondary">戻る</button>
+      <button type="button" class="next-button btn btn-primary">次へ</button>
+    </div>
   </div>
 
-  <div class="form-control">
-    <%= f.label :image, "画像", class: "label" %>
-    <%= f.file_field :image, class: "file-input file-input-bordered w-full" %>
-  </div>
+  <!-- ステップ3: コメント -->
+  <div id="step-3" class="step-panel hidden" data-step="3">
+    <div class="form-control">
+      <%= rf.label :comment, "コメント", class: "label" %>
+      <%= rf.text_area :comment, class: "textarea textarea-bordered w-full" %>
+    </div>
 
-  <div class="form-control">
-    <%= f.submit "商品を投稿する", class: "btn btn-primary" %>
+    <!-- ステップ3のナビゲーション -->
+    <div class="flex justify-between mt-4">
+      <button type="button" class="prev-button btn btn-secondary">戻る</button>
+      <%= f.submit "商品を投稿する", class: "btn btn-primary" %>
+    </div>
   </div>
 <% end %>
+
+  <% end %>
+</div>

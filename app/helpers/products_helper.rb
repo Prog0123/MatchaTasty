@@ -1,4 +1,5 @@
 module ProductsHelper
+  # 商品の平均スコアを表示するヘルパーメソッド
   def star_rating(score)
     full_stars = score.floor
     half_star = (score - full_stars) >= 0.5
