@@ -1,7 +1,7 @@
 class ProductsController < ApplicationController
   # ログインページへリダイレクト
   before_action :authenticate_user!, only: [ :new, :create ]
-  
+
   def index
     @q = Product.ransack(params[:q])
     @products = @q.result.page(params[:page]).per(10)
@@ -14,12 +14,12 @@ class ProductsController < ApplicationController
 
   def create
     @product = current_user.products.build(product_params)
-    
+
     # Reviewにuserを明示的に設定
     if @product.review
       @product.review.user = current_user
     end
-    
+
     if @product.save
       redirect_to products_path, notice: "商品が登録されました。"
     else

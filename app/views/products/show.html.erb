@@ -34,12 +34,17 @@
       </div>
 
       <!-- 本文 -->
-      <div class="mb-4">
-        <h3 class="text-lg font-semibold mb-2">本文</h3>
-        <div class="bg-gray-50 p-4 rounded">
-          <p><%= @review.comment %></p>
+      <% if @review.comment.present? %>
+        <div class="mb-4">
+          <h3 class="text-lg font-semibold mb-2">本文</h3>
+          <div class="bg-gray-50 p-4 rounded">
+            <p><%= @review.comment %></p>
+          </div>
         </div>
-      </div>
+      <% end %>
+
+    <% else %>
+      <p class="text-gray-500">まだレビューはありません。</p>
     <% end %>
   </div>
 

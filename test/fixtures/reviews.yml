@@ -3,11 +3,15 @@
 one:
   product: one
   user: one
-  content: MyText
+  comment: MyText
   rating: 1
+  score: 75
+  taste_level: 3
 
 two:
   product: two
   user: two
-  content: MyText
+  comment: MyText
   rating: 1
+  score: 65
+  taste_level: 2
