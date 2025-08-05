@@ -21,6 +21,11 @@ class ProductsController < ApplicationController
     end
 
     if @product.save
+      # タグの保存処理
+      if params[:product][:tag_names]
+        tag_names = params[:product][:tag_names].split(",").map(&:strip).uniq
+        @product.tags = tag_names.map { |name| Tag.find_or_initialize_by(name:) }
+      end
       redirect_to products_path, notice: "商品が登録されました。"
     else
       # エラー時はレビューオブジェクトを再構築（userも設定）
@@ -40,7 +45,7 @@ class ProductsController < ApplicationController
   def product_params
     params.require(:product).permit(
       :name, :category, :image,
-      review_attributes: [ :richness, :bitterness, :sweetness, :aftertaste, :appearance, :score, :comment, :taste_level, :user_id ]
+      review_attributes: [ :richness, :bitterness, :sweetness, :aftertaste, :appearance, :score, :comment, :taste_level, :user_id, :tag_names ]
     )
   end
 end

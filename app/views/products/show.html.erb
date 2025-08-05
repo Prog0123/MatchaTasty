@@ -9,6 +9,15 @@
     <% if @product.image.attached? %>
       <%= image_tag @product.image, class: "w-full max-w-md object-cover mb-4" %>
     <% end %>
+
+    <% if @product.tags.present? %>
+      <p class="text-gray-600 mb-2">
+        タグ:
+        <% @product.tags.each do |tag| %>
+          <span class="badge badge-outline mr-1"><%= tag.name %></span>
+        <% end %>
+      </p>
+    <% end %>
   </div>
 
   <!-- レビュー情報 -->
