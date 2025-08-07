@@ -23,7 +23,7 @@ class Product < ApplicationRecord
 
   # タグ名を取得するメソッド
   def tag_names
-    tags.pluck(:name).join(', ')
+    tags.pluck(:name).join(", ")
   end
 
   def self.ransackable_attributes(auth_object = nil)

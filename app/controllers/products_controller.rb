@@ -1,8 +1,8 @@
 class ProductsController < ApplicationController
   # ログインページへリダイレクト
-  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
-  before_action :set_product, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_user!, only: [:edit, :update, :destroy]
+  before_action :authenticate_user!, only: [ :new, :create, :edit, :update, :destroy ]
+  before_action :set_product, only: [ :show, :edit, :update, :destroy ]
+  before_action :authorize_user!, only: [ :edit, :update, :destroy ]
 
   def index
     @q = Product.ransack(params[:q])
@@ -57,7 +57,7 @@ class ProductsController < ApplicationController
   def product_params
     params.require(:product).permit(
       :name, :category, :image,
-      review_attributes: [:id, :richness, :bitterness, :sweetness, :aftertaste, :appearance, :score, :comment, :taste_level]
+      review_attributes: [ :id, :richness, :bitterness, :sweetness, :aftertaste, :appearance, :score, :comment, :taste_level ]
     )
   end
   def set_product
