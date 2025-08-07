@@ -4,6 +4,14 @@
   <!-- 商品情報 -->
   <h1 class="text-2xl font-bold">商品詳細</h1>
   <div class="card bg-base-100 shadow p-4">
+
+    <% if user_signed_in? && @product.user == current_user %>
+      <div class="absolute top-4 right-4 flex space-x-2">
+        <%= link_to "編集", edit_product_path(@product), class: "btn btn-sm btn-outline btn-primary" %>
+        <%= link_to "削除", product_path(@product), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "btn btn-sm btn-outline btn-error" %>
+      </div>
+    <% end %>
+
     <h1 class="text-3xl font-bold mb-4"><%= @product.name %></h1>
     <p class="text-gray-600 mb-2">カテゴリ: <%= @product.category.titleize %></p>
     <% if @product.image.attached? %>

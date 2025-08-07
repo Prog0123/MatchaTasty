@@ -21,6 +21,11 @@ class Product < ApplicationRecord
   validates :name, presence: true
   validates :category, presence: true
 
+  # タグ名を取得するメソッド
+  def tag_names
+    tags.pluck(:name).join(", ")
+  end
+
   def self.ransackable_attributes(auth_object = nil)
     %w[name category created_at updated_at]
   end
