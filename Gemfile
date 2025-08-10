@@ -63,3 +63,7 @@ gem "devise"
 gem "kaminari"
 
 gem "ransack"
+
+gem "aws-sdk-s3"
+
+gem "dotenv-rails"
