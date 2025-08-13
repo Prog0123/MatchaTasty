@@ -72,23 +72,45 @@
   <div id="step-2" class="step-panel hidden" data-step="2">
     <div class="divider">レビュー情報</div>
     <% [
-      ["濃さ（🍵）", :richness, "🍵"],
-      ["苦味（☕）", :bitterness, "☕"],
-      ["甘さ（🍬）", :sweetness, "🍬"],
-      ["後味（🎐）", :aftertaste, "🎐"],
-      ["見た目（👀）", :appearance, "👀"],
-      ["総合評価（★）", :score, "★"]
+      ["濃さ", :richness, "★", true],
+      ["苦味", :bitterness, "★", true],
+      ["甘さ", :sweetness, "★", true],
+      ["後味", :aftertaste, "★", true],
+      ["見た目", :appearance, "★", true]
     ].each do |label, name, symbol| %>
-      <div class="form-control mb-4" data-controller="stars" data-stars-name="product[review_attributes][<%= name %>]" data-stars-symbol="<%= symbol %>">
-        <label class="label"><%= label %></label>
-        <div class="flex space-x-1">
+      <div class="form-control mb-4"
+           data-controller="stars"
+           data-stars-name="product[review_attributes][<%= name %>]"
+           data-stars-symbol-value="<%= symbol %>">
+
+      <!-- 各要素を個別に調整可能なコンテナ -->
+      <div class="flex items-center w-full relative">
+        <!-- ラベル部分 -->
+        <div class="ml-10 w-20 flex-shrink-0">
+          <label class="label">
+            <span class="label-text font-medium"><%= label %></span>
+          </label>
+        </div>
+
+        <!-- 星評価部分 -->
+        <div class="ml-19 flex space-x-1">
           <% 5.times do |i| %>
-            <i class="star cursor-pointer text-2xl text-gray-400" data-action="click->stars#select" data-value="<%= i + 1 %>"><%= symbol %></i>
+            <i class="star cursor-pointer text-2xl text-gray-400 hover:text-yellow-400 transition-colors"
+               data-action="click->stars#select"
+               data-value="<%= i + 1 %>"><%= symbol %></i>
           <% end %>
         </div>
-        <%= rf.hidden_field name, data: { stars_target: "input" } %>
+
+        <!-- 数値表示部分 -->
+        <div class="ml-20 flex items-center bg-gray-100 px-3 py-1 rounded-lg">
+          <span class="text-xl font-bold text-gray-700 min-w-[2rem]" data-stars-target="display">0</span>
+          <span class="text-sm text-gray-500 ml-1">/ 5</span>
+        </div>
       </div>
-    <% end %>
+      
+      <%= rf.hidden_field name, data: { stars_target: "input" } %>
+    </div>
+  <% end %>
 
     <!-- ステップ2のナビゲーション -->
     <div class="flex justify-between mt-4">

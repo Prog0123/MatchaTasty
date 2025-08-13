@@ -27,26 +27,58 @@
   <% if @products.empty? %>
     <div class="alert alert-warning">商品が登録されていません。</div>
   <% else %>
-    <!-- 商品一覧 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      <% @products.each do |product| %>
-        <div class="card bg-base-100 shadow">
-          <figure class="h-40 overflow-hidden">
-            <% if product.image.attached? %>
-              <%= image_tag product.image, class: "w-full object-cover h-full" %>
-            <% else %>
-              <div class="flex items-center justify-center w-full h-full text-gray-400">画像なし</div>
+
+<!-- 商品一覧 -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+  <% @products.each do |product| %>
+    <div class="card bg-base-100 shadow">
+      <figure class="h-40 overflow-hidden">
+        <% if product.image.attached? %>
+          <%= image_tag product.image, class: "w-full object-cover h-full" %>
+        <% else %>
+          <div class="flex items-center justify-center w-full h-full text-gray-400">画像なし</div>
+        <% end %>
+      </figure>
+      <div class="card-body p-4">
+        <h2 class="card-title">
+          <%= link_to product.name, product_path(product), class: "link link-hover" %>
+        </h2>
+        <p class="text-sm text-gray-500">
+          カテゴリ: <%= product.category&.titleize || "カテゴリ未設定" %>
+        </p>
+
+        <% if product.reviews.any? %>
+          <% review = product.reviews.first %>
+
+          <!-- 濃さ -->
+          <div class="flex items-center space-x-1">
+            <% review.richness.to_i.times do %>
+              <span class="text-green-600">🍵</span>
             <% end %>
-          </figure>
-          <div class="card-body p-4">
-            <h2 class="card-title">
-              <%= link_to product.name, product_path(product), class: "link link-hover" %>
-            </h2>
-            <p class="text-sm text-gray-500">カテゴリ: <%= product.category&.titleize || "カテゴリ未設定" %></p>
+            <span class="text-sm font-bold"><%= review.richness.to_i %>/5</span>
           </div>
-        </div>
-      <% end %>
+
+          <!-- 総合評価 -->
+          <% avg = review.average_score %>
+          <div class="flex items-center space-x-1">
+            <% 5.times do |i| %>
+              <% if i < avg.round %>
+                <span class="text-yellow-500">★</span>
+              <% else %>
+                <span class="text-gray-300">★</span>
+              <% end %>
+            <% end %>
+            <span class="text-sm font-bold"><%= avg %>/5.0</span>
+          </div>
+        <% else %>
+          <p class="text-gray-400 text-sm">まだレビューなし</p>
+        <% end %>
+
+      </div>
     </div>
+  <% end %>
+</div>
+
 
     <!-- ページネーション -->
     <div class="mt-6">

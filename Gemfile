@@ -67,3 +67,5 @@ gem "ransack"
 gem "aws-sdk-s3"
 
 gem "dotenv-rails"
+
+gem "rails-i18n"

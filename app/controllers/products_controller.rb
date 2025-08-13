@@ -32,6 +32,17 @@ class ProductsController < ApplicationController
 
   def show
     @review = @product.review  # 単数形に変更
+    if @review.present?
+      scores = [
+        @review.richness,
+        @review.bitterness,
+        @review.sweetness,
+        @review.aftertaste,
+        @review.appearance
+      ].compact
+
+      @average_score = (scores.sum.to_f / scores.size).round(1) if scores.any?
+    end
   end
 
   def edit
