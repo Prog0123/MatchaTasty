@@ -26,29 +26,42 @@
         <% end %>
       </p>
     <% end %>
-  </div>
 
   <!-- レビュー情報 -->
-  <div class="card bg-base-100 shadow p-4">
-    <h2 class="text-2xl font-semibold mb-4">レビュー</h2>
-
     <% if @review.present? %>
+      <!-- 濃さ表示 -->
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold mb-2">濃さ</h3>
+        <div class="flex items-center space-x-2">
+          <div class="flex">
+            <% @review.richness.to_i.times do %>
+              <span class="text-green-600 text-xl">🍵</span>
+            <% end %>
+          </div>
+          <span class="text-lg font-bold"><%= @review.richness.to_i %>/5</span>
+        </div>
+      </div>
+
       <!-- 総合評価 -->
       <div class="mb-4">
         <h3 class="text-lg font-semibold mb-2">総合評価</h3>
-        <div class="flex items-center space-x-2">
-          <div class="flex">
-            <% 5.times do |i| %>
-              <% if i < (@review.score || 0) %>
-                <span class="text-yellow-500 text-xl">★</span>
-              <% else %>
-                <span class="text-gray-300 text-xl">★</span>
+        <% if @average_score.present? %>
+          <div class="flex items-center space-x-2">
+            <div class="flex">
+              <% 5.times do |i| %>
+                <% if i < @average_score.round %>
+                  <span class="text-green-600 text-xl">★</span>
+                <% else %>
+                  <span class="text-gray-300 text-xl">★</span>
               <% end %>
             <% end %>
           </div>
-          <span class="text-lg font-bold"><%= @review.score || 0 %>/5</span>
+          <span class="text-lg font-bold"><%= @average_score %>/5.0</span>
         </div>
-      </div>
+      <% else %>
+        <p class="text-gray-500">まだ評価がありません。</p>
+      <% end %>
+    </div>
 
       <!-- 本文 -->
       <% if @review.comment.present? %>

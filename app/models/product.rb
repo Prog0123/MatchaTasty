@@ -14,6 +14,8 @@ class Product < ApplicationRecord
   # 保存時にタグの関連を更新
   after_save :assign_tags
 
+  # レビューの関連付け
+  has_many :reviews, dependent: :destroy
 
   # タグ付け
   enum :category, { latte: 0, espresso: 1, matcha: 2, tea: 3 }
