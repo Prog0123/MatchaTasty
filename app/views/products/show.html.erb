@@ -14,8 +14,28 @@
 
     <h1 class="text-3xl font-bold mb-4"><%= @product.name %></h1>
     <p class="text-gray-600 mb-2">カテゴリ: <%= @product.category.titleize %></p>
-    <% if @product.image.attached? %>
-      <%= image_tag @product.image, class: "w-full max-w-md object-cover mb-4" %>
+
+    <% if @review.present? && @chart_data.present? %>
+      <div class="flex flex-wrap gap-6 items-start mt-4">
+        <!-- 商品画像 -->
+        <div class="w-full md:w-1/2">
+          <% if @product.image.attached? %>
+            <%= image_tag @product.image, class: "w-full max-w-md object-cover mb-4" %>
+          <% end %>
+        </div>
+
+        <!-- レーダーチャート -->
+        <div class="w-full md:w-1/2">
+          <div class="chart-container" style="position: relative; height: 400px;">
+            <canvas
+              data-controller="review-radar"
+              data-review-radar-data-value="<%= @chart_data.to_json %>"
+              width="400"
+              height="400">
+            </canvas>
+          </div>
+        </div>
+      </div>
     <% end %>
 
     <% if @product.tags.present? %>
