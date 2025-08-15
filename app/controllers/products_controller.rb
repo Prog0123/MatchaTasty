@@ -31,7 +31,9 @@ class ProductsController < ApplicationController
   end
 
   def show
-    @review = @product.review  # 単数形に変更
+    @review = @product.review
+    @reviews = @product.review.present? ? [ @product.review ] : []
+    # 平均スコアの計算
     if @review.present?
       scores = [
         @review.richness,
@@ -42,6 +44,8 @@ class ProductsController < ApplicationController
       ].compact
 
       @average_score = (scores.sum.to_f / scores.size).round(1) if scores.any?
+      # レーダーチャート用のデータを準備
+      @chart_data = prepare_radar_chart_data
     end
   end
 
@@ -64,6 +68,32 @@ class ProductsController < ApplicationController
   end
 
   private
+
+  # レーダーチャート用のデータを準備するメソッド
+  def prepare_radar_chart_data
+    return nil unless @review.present?
+
+    {
+      labels: [ "濃さ", "苦味", "甘さ", "後味", "見た目" ],
+      datasets: [ {
+        label: "レビュー評価",
+        data: [
+          @review.richness || 0,
+          @review.bitterness || 0,
+          @review.sweetness || 0,
+          @review.aftertaste || 0,
+          @review.appearance || 0
+        ],
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 2,
+        pointBackgroundColor: "rgba(75, 192, 192, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(75, 192, 192, 1)"
+      } ]
+    }
+  end
 
   def product_params
     params.require(:product).permit(
