@@ -30,7 +30,7 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
       post products_path, params: {
         product: {
           name: "抹茶ロールケーキ",
-          category: "espresso",
+          category: "cake",
           store_name: "抹茶堂",
           description: "濃厚な抹茶の味わい",
           richness: 3.0,

@@ -30,13 +30,13 @@ class Product < ApplicationRecord
 
   # カテゴリの日本語翻訳
   CATEGORY_TRANSLATIONS = {
-    'cake' => 'ケーキ',
-    'dessert' => 'デザート',
-    'ice_cream' => 'アイスクリーム',
-    'japanese_sweets' => '和菓子',
-    'drink' => 'ドリンク',
-    'parfait' => 'パフェ',
-    'other' => 'その他'
+    "cake" => "ケーキ",
+    "dessert" => "デザート",
+    "ice_cream" => "アイスクリーム",
+    "japanese_sweets" => "和菓子",
+    "drink" => "ドリンク",
+    "parfait" => "パフェ",
+    "other" => "その他"
   }.freeze
 
   validates :name, presence: true
@@ -49,6 +49,7 @@ class Product < ApplicationRecord
 
   # カテゴリの日本語名を取得
   def category_japanese
+    return "未設定" if category.nil?
     CATEGORY_TRANSLATIONS[category] || category.titleize
   end
 
