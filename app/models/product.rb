@@ -18,7 +18,26 @@ class Product < ApplicationRecord
   has_many :reviews, dependent: :destroy
 
   # タグ付け
-  enum :category, { latte: 0, espresso: 1, matcha: 2, tea: 3 }
+  enum category: {
+    cake: 0,
+    dessert: 1,
+    ice_cream: 2,
+    japanese_sweets: 3,
+    drink: 4,
+    parfait: 5,
+    other: 6
+  }
+
+  # カテゴリの日本語翻訳
+  CATEGORY_TRANSLATIONS = {
+    "cake" => "ケーキ",
+    "dessert" => "デザート",
+    "ice_cream" => "アイスクリーム",
+    "japanese_sweets" => "和菓子",
+    "drink" => "ドリンク",
+    "parfait" => "パフェ",
+    "other" => "その他"
+  }.freeze
 
   validates :name, presence: true
   validates :category, presence: true
@@ -26,6 +45,12 @@ class Product < ApplicationRecord
   # タグ名を取得するメソッド
   def tag_names
     tags.pluck(:name).join(", ")
+  end
+
+  # カテゴリの日本語名を取得
+  def category_japanese
+    return "未設定" if category.nil?
+    CATEGORY_TRANSLATIONS[category] || category.titleize
   end
 
   def self.ransackable_attributes(auth_object = nil)

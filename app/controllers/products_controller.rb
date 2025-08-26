@@ -6,7 +6,16 @@ class ProductsController < ApplicationController
 
   def index
     @q = Product.ransack(params[:q])
-    @products = @q.result.page(params[:page]).per(10)
+    @products = @q.result
+                .includes(:user, :tags, reviews: :user) # 修正: reviews: :userを最後に移動
+                .page(params[:page])
+                .per(10)
+
+    # タグによる絞り込み
+    if params[:q] && params[:q][:tag].present?
+      tag_name = params[:q][:tag]
+      @products = @products.joins(:tags).where(tags: { name: tag_name })
+    end
   end
 
   def new
@@ -73,34 +82,47 @@ class ProductsController < ApplicationController
   def prepare_radar_chart_data
     return nil unless @review.present?
 
+    # Chart.js用のデータと、数値表示用のデータの両方を含む
     {
-      labels: [ "濃さ", "苦味", "甘さ", "後味", "見た目" ],
-      datasets: [ {
-        label: "レビュー評価",
-        data: [
-          @review.richness || 0,
-          @review.bitterness || 0,
-          @review.sweetness || 0,
-          @review.aftertaste || 0,
-          @review.appearance || 0
-        ],
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 2,
-        pointBackgroundColor: "rgba(75, 192, 192, 1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(75, 192, 192, 1)"
-      } ]
+      # Chart.js用のレーダーチャートデータ
+      chart_config: {
+        labels: [ "濃さ", "苦味", "甘さ", "後味", "見た目" ],
+        datasets: [ {
+          label: "味覚評価",
+          data: [
+            @review.richness || 0,
+            @review.bitterness || 0,
+            @review.sweetness || 0,
+            @review.aftertaste || 0,
+            @review.appearance || 0
+          ],
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 2,
+          pointBackgroundColor: "rgba(75, 192, 192, 1)",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "rgba(75, 192, 192, 1)"
+        } ]
+      },
+      # 数値表示用のデータ
+      values: [
+        { label: "濃さ", value: @review.richness || 0 },
+        { label: "苦味", value: @review.bitterness || 0 },
+        { label: "甘さ", value: @review.sweetness || 0 },
+        { label: "後味", value: @review.aftertaste || 0 },
+        { label: "見た目", value: @review.appearance || 0 }
+      ]
     }
   end
 
   def product_params
     params.require(:product).permit(
-      :name, :category, :image,
+      :name, :category, :image, :shop_name, :price,  # shop_nameとpriceをトップレベルに移動
       review_attributes: [ :id, :richness, :bitterness, :sweetness, :aftertaste, :appearance, :score, :comment, :taste_level ]
     )
   end
+
   def set_product
     @product = Product.find(params[:id])
   end

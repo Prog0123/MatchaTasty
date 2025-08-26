@@ -1,0 +1,79 @@
+ja:
+  activerecord:
+    models:
+      product: "商品"
+      user: "ユーザー"
+      review: "レビュー"
+      tag: "タグ"
+    attributes:
+      product:
+        name: "商品名"
+        category: "カテゴリ"
+        shop_name: "店舗名"
+        price: "価格"
+        created_at: "投稿日"
+        updated_at: "更新日"
+      user:
+        name: "名前"
+        email: "メールアドレス"
+      review:
+        comment: "コメント"
+        richness: "濃さ"
+        sweetness: "甘さ"
+        bitterness: "苦味"
+        flavor: "風味"
+        aroma: "香り"
+        appearance: "見た目"
+        score: "総合評価"
+    enums:
+      product:
+        category:
+          cake: "ケーキ"
+          dessert: "デザート"
+          ice_cream: "アイスクリーム"
+          japanese_sweets: "和菓子"
+          drink: "ドリンク"
+          parfait: "パフェ"
+          other: "その他"
+  
+  # フォームのラベルやボタンテキスト
+  helpers:
+    submit:
+      product:
+        create: "商品を投稿"
+        update: "商品を更新"
+      user:
+        create: "ユーザー登録"
+        update: "プロフィール更新"
+    label:
+      product:
+        name: "商品名"
+        category: "カテゴリ"
+        shop_name: "店舗名"
+        price: "価格"
+        tag_names: "タグ（カンマ区切り）"
+      review:
+        comment: "レビューコメント"
+        richness: "濃さ"
+        sweetness: "甘さ"
+        bitterness: "苦味"
+        flavor: "風味"
+        aroma: "香り"
+        appearance: "見た目"
+        score: "総合評価"
+  
+  # 共通メッセージ
+  messages:
+    confirm_delete: "本当に削除しますか？"
+    no_data: "データがありません"
+    no_image: "画像なし"
+    anonymous: "匿名"
+
+  # Kaminari ページネーション設定を追加
+  views:
+    pagination:
+      first: "≪ 最初"
+      last: "最後 ≫"
+      previous: "‹ 前へ"
+      next: "次へ ›"
+      truncate: "..."

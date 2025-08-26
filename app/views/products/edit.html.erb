@@ -10,7 +10,7 @@
 <!-- ステップ名 -->
 <div class="flex justify-between max-w-2xl mx-auto mb-8 px-4" id="step-labels">
   <% steps = [
-    { number: 1, label: "商品情報", description: "商品名・店舗名を入力" },
+    { number: 1, label: "商品情報", description: "商品名・店舗名・価格を入力" },
     { number: 2, label: "味覚評価", description: "5段階で評価" },
     { number: 3, label: "コメント", description: "自由に感想を書く" }
   ] %>
@@ -43,29 +43,38 @@
   <div id="step-1" class="step-panel" data-step="1">
     <div class="form-control">
       <%= f.label :name, "商品名", class: "label" %>
-      <%= f.text_field :name, class: "input input-bordered w-full" %>
+      <%= f.text_field :name, class: "input input-bordered w-full", placeholder: "例：チョコレートケーキ" %>
+    </div>
+
+    <div class="form-control">
+      <%= f.label :shop_name, "店舗名", class: "label" %>
+      <%= f.text_field :shop_name, class: "input input-bordered w-full", placeholder: "例：パティスリー○○" %>
     </div>
 
     <div class="form-control">
       <%= f.label :category, "カテゴリ", class: "label" %>
-      <%= f.select :category, Product.categories.keys.map { |k| [k.titleize, k] }, {}, class: "select select-bordered w-full" %>
+      <%= f.select :category, [
+        ["ケーキ", "cake"],
+        ["デザート", "dessert"],
+        ["アイス", "ice_cream"],
+        ["和菓子", "japanese_sweets"],
+        ["ドリンク", "drink"],
+        ["パフェ", "parfait"],
+        ["その他", "other"]
+      ], { prompt: "カテゴリを選択してください" }, { class: "select select-bordered w-full" } %>
+    </div>
+
+    <div class="form-control">
+      <%= f.label :price, "価格（円）", class: "label" %>
+      <div class="relative">
+        <%= f.number_field :price, class: "input input-bordered w-full pr-12", placeholder: "500", min: 0 %>
+        <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">円</span>
+      </div>
     </div>
 
     <div class="form-control">
       <%= f.label :tag_names, "タグ（カンマ区切り）", class: "label" %>
-      <%= f.text_field :tag_names, value: @product.tag_names, class: "input input-bordered w-full" %>
-    </div>
-
-    <div class="form-control">
-      <%= f.label :image, "画像", class: "label" %>
-      <% if @product.image.attached? %>
-        <div class="mb-2">
-          <p class="text-sm text-gray-600">現在の画像:</p>
-          <%= image_tag @product.image, class: "w-32 h-32 object-cover rounded mb-2" %>
-        </div>
-      <% end %>
-      <%= f.file_field :image, class: "file-input file-input-bordered w-full" %>
-      <p class="text-xs text-gray-500 mt-1">※新しい画像を選択すると現在の画像が置き換えられます</p>
+      <%= f.text_field :tag_names, value: @product.tag_names, class: "input input-bordered w-full", placeholder: "例：チョコレート, 濃厚, おすすめ" %>
     </div>
 
     <div class="flex justify-end mt-4">
@@ -126,11 +135,25 @@
     </div>
   </div>
 
-  <!-- ステップ3: コメント -->
+  <!-- ステップ3: 画像とコメント -->
   <div id="step-3" class="step-panel hidden" data-step="3">
     <div class="form-control">
+      <%= f.label :image, "画像", class: "label" %>
+      <% if @product.image.attached? %>
+        <div class="mb-2">
+          <p class="text-sm text-gray-600">現在の画像:</p>
+          <%= image_tag @product.image, class: "w-32 h-32 object-cover rounded mb-2" %>
+        </div>
+      <% end %>
+      <%= f.file_field :image, class: "file-input file-input-bordered w-full", accept: "image/*" %>
+      <label class="label">
+        <span class="label-text-alt text-gray-500">JPG、PNG、GIF形式の画像をアップロードしてください（※新しい画像を選択すると現在の画像が置き換えられます）</span>
+      </label>
+    </div>
+
+    <div class="form-control">
       <%= rf.label :comment, "コメント", class: "label" %>
-      <%= rf.text_area :comment, class: "textarea textarea-bordered w-full" %>
+      <%= rf.text_area :comment, class: "textarea textarea-bordered w-full h-32", placeholder: "商品の感想や気づいたことを自由にお書きください..." %>
     </div>
 
     <!-- ステップ3のナビゲーション -->

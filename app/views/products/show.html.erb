@@ -1,10 +1,10 @@
 <!-- 詳細ページ -->
 <div class="container mx-auto p-4 space-y-6">
 
-  <!-- 商品情報 -->
-  <h1 class="text-2xl font-bold">商品詳細</h1>
-  <div class="card bg-base-100 shadow p-4">
+  <!-- 商品情報カード -->
+  <div class="bg-white rounded-lg shadow p-6 relative max-w-4xl mx-auto">
 
+    <!-- 編集/削除ボタン -->
     <% if user_signed_in? && @product.user == current_user %>
       <div class="absolute top-4 right-4 flex space-x-2">
         <%= link_to "編集", edit_product_path(@product), class: "btn btn-sm btn-outline btn-primary" %>
@@ -12,101 +12,173 @@
       </div>
     <% end %>
 
-    <h1 class="text-3xl font-bold mb-4"><%= @product.name %></h1>
-    <p class="text-gray-600 mb-2">カテゴリ: <%= @product.category.titleize %></p>
-
-    <% if @review.present? && @chart_data.present? %>
-      <div class="flex flex-wrap gap-6 items-start mt-4">
-        <!-- 商品画像 -->
-        <div class="w-full md:w-1/2">
-          <% if @product.image.attached? %>
-            <%= image_tag @product.image, class: "w-full max-w-md object-cover mb-4" %>
-          <% end %>
-        </div>
-
-        <!-- レーダーチャート -->
-        <div class="w-full md:w-1/2">
-          <div class="chart-container" style="position: relative; height: 400px;">
-            <canvas
-              data-controller="review-radar"
-              data-review-radar-data-value="<%= @chart_data.to_json %>"
-              width="400"
-              height="400">
-            </canvas>
-          </div>
-        </div>
+    <!-- 投稿者名 -->
+    <div class="flex items-center space-x-2 text-gray-500 text-base mb-6">
+      <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+        <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+        </svg>
       </div>
-    <% end %>
-
-    <% if @product.tags.present? %>
-      <p class="text-gray-600 mb-2">
-        タグ:
-        <% @product.tags.each do |tag| %>
-          <span class="badge badge-outline mr-1"><%= tag.name %></span>
-        <% end %>
-      </p>
-    <% end %>
-
-  <!-- レビュー情報 -->
-    <% if @review.present? %>
-      <!-- 濃さ表示 -->
-      <div class="mb-4">
-        <h3 class="text-lg font-semibold mb-2">濃さ</h3>
-        <div class="flex items-center space-x-2">
-          <div class="flex">
-            <% @review.richness.to_i.times do %>
-              <span class="text-green-600 text-xl">🍵</span>
-            <% end %>
-          </div>
-          <span class="text-lg font-bold"><%= @review.richness.to_i %>/5</span>
-        </div>
-      </div>
-
-      <!-- 総合評価 -->
-      <div class="mb-4">
-        <h3 class="text-lg font-semibold mb-2">総合評価</h3>
-        <% if @average_score.present? %>
-          <div class="flex items-center space-x-2">
-            <div class="flex">
-              <% 5.times do |i| %>
-                <% if i < @average_score.round %>
-                  <span class="text-green-600 text-xl">★</span>
-                <% else %>
-                  <span class="text-gray-300 text-xl">★</span>
-              <% end %>
-            <% end %>
-          </div>
-          <span class="text-lg font-bold"><%= @average_score %>/5.0</span>
-        </div>
-      <% else %>
-        <p class="text-gray-500">まだ評価がありません。</p>
-      <% end %>
+      <span><%= @product.user&.name || "匿名" %></span>
     </div>
 
-      <!-- 本文 -->
-      <% if @review.comment.present? %>
-        <div class="mb-4">
-          <h3 class="text-lg font-semibold mb-2">本文</h3>
-          <div class="bg-gray-50 p-4 rounded">
-            <p><%= @review.comment %></p>
+    <!-- 商品名 -->
+    <h1 class="text-3xl font-bold mb-2"><%= @product.name %></h1>
+
+    <!-- 画像とレーダーチャート -->
+    <% if @review.present? && @chart_data.present? %>
+      <div class="flex flex-col md:flex-row gap-6 items-start mt-4">
+        <!-- 左側：商品画像と詳細情報 -->
+        <div class="w-full md:w-1/2 space-y-4">
+          <!-- 商品画像 -->
+          <% if @product.image.attached? %>
+            <%= image_tag @product.image, class: "w-full max-w-sm object-cover rounded shadow mb-4" %>
+          <% else %>
+            <div class="w-full h-64 bg-gray-100 flex items-center justify-center rounded">No Image</div>
+          <% end %>
+
+          <!-- 商品詳細情報 -->
+          <div class="grid grid-cols-2 gap-4 max-w-sm mt-10">
+            <!-- 店舗名・価格 -->
+            <div>
+              <h4 class="font-semibold text-gray-700 text-base mb-1">店舗名</h4>
+              <p class="text-gray-600 text-base"><%= @product.shop_name.present? ? @product.shop_name : "未設定" %></p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-700 text-base mb-1">価格</h4>
+              <p class="text-gray-600 text-base"><%= @product.price.present? ? "#{number_with_delimiter(@product.price)}円" : "未設定" %></p>
+            </div>
+
+            <!-- カテゴリ・タグ -->
+            <div>
+              <h4 class="font-semibold text-gray-700 text-base mb-1">カテゴリ</h4>
+              <p class="text-gray-600 text-base"><%= @product.category_japanese %></p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-700 text-base mb-1">タグ</h4>
+              <% if @product.tags.present? %>
+                <div class="flex flex-wrap gap-1">
+                  <% @product.tags.each do |tag| %>
+                    <%= link_to products_path(tag: tag.name), class: "badge badge-xs badge-outline hover:badge-primary transition-colors cursor-pointer" do %>
+                      <%= tag.name %>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% else %>
+                <p class="text-gray-600 text-base">なし</p>
+              <% end %>
+            </div>
+
+            <!-- 濃さ・総合評価 -->
+            <div>
+              <h4 class="font-semibold text-gray-700 text-base mb-1">濃さ</h4>
+              <div class="flex items-center space-x-1">
+                <div class="flex">
+                  <% @review.richness.to_i.times do %>
+                    <span class="text-green-600 text-base">🍵</span>
+                  <% end %>
+                </div>
+                <span class="text-xs font-bold text-gray-600"><%= @review.richness.to_i %>/5</span>
+              </div>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-700 text-base mb-1">総合評価</h4>
+              <% if @average_score.present? %>
+                <div class="flex items-center space-x-1">
+                  <div class="flex">
+                    <% 5.times do |i| %>
+                      <% if i < @average_score.round %>
+                        <span class="text-yellow-400 text-base">★</span>
+                      <% else %>
+                        <span class="text-gray-300 text-base">★</span>
+                      <% end %>
+                    <% end %>
+                  </div>
+                  <span class="text-xs font-bold text-gray-600"><%= number_with_precision(@average_score, precision: 1) %>/5.0</span>
+                </div>
+              <% else %>
+                <p class="text-gray-500 text-base">未評価</p>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Xシェアボタンと投稿日 -->
+          <div class="max-w-sm mt-10 space-y-4">
+            <!-- Xシェアボタン -->
+            <div>
+              <button class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" disabled>
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                Xでシェア（準備中）
+              </button>
+            </div>
+
+            <!-- 投稿日 -->
+            <div>
+              <h4 class="font-semibold text-gray-700 text-base mb-10"></h4>
+              <p class="text-gray-600 text-base">
+                <%= @product.created_at.strftime("%Y年%m月%d日") %>
+              </p>
+            </div>
           </div>
         </div>
-      <% end %>
 
-    <% else %>
-      <p class="text-gray-500">まだレビューはありません。</p>
+        <!-- レーダーチャートとレビュー -->
+        <div class="w-full md:w-1/2 space-y-6">
+          <!-- レーダーチャート -->
+          <div class="flex justify-center">
+            <div class="chart-container" style="height: 300px; width: 300px;">
+              <canvas
+                data-controller="review-radar"
+                data-review-radar-data-value="<%= @chart_data[:chart_config].to_json %>"
+                width="300"
+                height="300">
+              </canvas>
+            </div>
+          </div>
+
+          <!-- レーダーチャートの数値表示 -->
+          <div class="bg-gray-50 p-4 rounded">
+            <h4 class="font-semibold text-gray-700 mb-3 text-center">評価詳細</h4>
+            <div class="grid grid-cols-2 gap-3">
+              <% @chart_data[:values].each do |item| %>
+                <div class="flex justify-between items-center">
+                  <span class="text-base text-gray-600"><%= item[:label] %></span>
+                  <span class="text-base font-bold text-gray-800"><%= item[:value].to_i %>/5</span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- レビューコメント -->
+          <% if @review.comment.present? %>
+            <div class="bg-gray-50 p-4 rounded">
+              <h4 class="font-semibold text-gray-700 mb-2">レビュー</h4>
+              <p class="text-base text-gray-600"><%= simple_format(@review.comment) %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
     <% end %>
+
+    <!-- レビューがない場合の表示 -->
+    <% unless @review.present? && @chart_data.present? %>
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <p class="text-gray-500">まだレビューはありません。</p>
+      </div>
+    <% end %>
+
   </div>
 
   <!-- コメント一覧 -->
-  <div class="card bg-base-100 shadow p-4">
-    <h2 class="text-2xl font-semibold mb-4">コメント</h2>
+  <div class="bg-white rounded-lg shadow p-6 max-w-4xl mx-auto">
+    <h2 class="text-2xl font-semibold mb-4">コメント(準備中)</h2>
     <p class="text-gray-500">まだコメントはありません。</p>
   </div>
 
   <!-- 戻るボタン -->
-  <div>
+  <div class="max-w-4xl mx-auto flex">
     <%= link_to "商品一覧に戻る", products_path, class: "btn btn-outline" %>
   </div>
-
 </div>
