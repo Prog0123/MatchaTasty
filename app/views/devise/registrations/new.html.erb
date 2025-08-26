@@ -5,6 +5,12 @@
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
 
+    <!-- ユーザー名 -->
+    <div class="form-control mb-4">
+      <%= f.label :name, "ユーザー名", class: "label label-text font-semibold" %>
+      <%= f.text_field :name, autocomplete: "name", class: "input input-bordered w-full" %>
+    </div>
+
     <!-- メール -->
     <div class="form-control mb-4">
       <%= f.label :email, "メールアドレス", class: "label label-text font-semibold" %>

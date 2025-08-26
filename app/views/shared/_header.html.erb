@@ -1,24 +1,39 @@
-<header class="bg-primary text-white shadow">
+<header class="bg-emerald-600 text-white shadow">
   <div class="w-full px-6 py-3">
     <div class="flex items-center justify-between">
       <!-- ロゴ -->
       <%= link_to root_path, class: "flex items-center space-x-2 text-xl font-bold" do %>
+        <i class="fas fa-leaf"></i>
         <span>MatchaTasty</span>
       <% end %>
 
       <!-- ナビゲーション -->
       <nav class="flex items-center space-x-4">
-        <%= link_to "投稿一覧", products_path, class: "hover:text-green-200" %>
-        <%= link_to "ランキング", "#", class: "hover:text-green-200" %>
-        <%= link_to "マイページ", "#", class: "hover:text-green-200" %>
+        <%= link_to "商品一覧", products_path, class: "hover:text-emerald-200" %>
+        <%= link_to "ランキング(準備中)", "#", class: "hover:text-emerald-200" %>
+
         <% if user_signed_in? %>
-          <%= link_to "ログアウト", destroy_user_session_path,
-              data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
-              class: "btn btn-outline" %>
+          <div class="relative group">
+            <button class="w-9 h-9 bg-emerald-500 rounded-full flex items-center justify-center hover:bg-emerald-400 transition-colors">
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+              </svg>
+            </button>
+
+            <!-- ドロップダウン -->
+            <div class="absolute right-0 mt-2 w-40 bg-white text-black rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <%= link_to "マイページ", "#", class: "block px-4 py-2 hover:bg-gray-100 rounded-t-lg" %>
+              <%= link_to "ログアウト", destroy_user_session_path,
+                    data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
+                    class: "block px-4 py-2 hover:bg-gray-100 rounded-b-lg" %>
+            </div>
+          </div>
+          
         <% else %>
-          <%= link_to "ログイン", new_user_session_path, class: "btn btn-primary" %>
+          <%= link_to "ログイン", new_user_session_path,
+                class: "hover:text-emerald-200" %>
+          <%= link_to "新規登録", new_user_registration_path, class: "hover:text-emerald-200" %>
         <% end %>
-        <%= link_to "新規登録", new_user_registration_path, class: "hover:text-green-200" %>
       </nav>
     </div>
   </div>

@@ -3,22 +3,24 @@
   <!-- ヘッダーと新規作成ボタン -->
   <div class="flex justify-between items-center">
     <h1 class="text-2xl font-bold">商品一覧</h1>
-    <%= link_to "＋ 新規投稿", new_product_path, class: "btn btn-primary" %>
+    <%= link_to "＋ 新規投稿", new_product_path, class: "btn btn-secondary" %>
   </div>
 
   <!-- 検索フォーム -->
   <div class="card bg-base-100 p-4 shadow">
     <%= search_form_for @q, url: products_path, method: :get, class: "flex flex-col md:flex-row gap-4" do |f| %>
-      <div>
+      <div class="flex-2">
         <%= f.label :name_cont, "商品名", class: "label-text" %>
         <%= f.search_field :name_cont, class: "input input-bordered w-full" %>
       </div>
-      <div>
+      <div class="flex-1">
         <%= f.label :category_eq, "カテゴリ", class: "label-text" %>
-        <%= f.select :category_eq, Product.categories.keys.map { |k| [k.titleize, k] }, { include_blank: "すべて" }, class: "select select-bordered w-full" %>
+        <%= f.select :category_eq, options_from_collection_for_select(
+          Product::CATEGORY_TRANSLATIONS.map { |key, value| [value, key] }, 
+          :second, :first), { include_blank: "すべて" }, { class: "select select-bordered w-full" } %>
       </div>
       <div class="self-end">
-        <%= f.submit "検索", class: "btn btn-secondary" %>
+        <%= f.submit "検索", class: "btn btn-secondary w-full md:w-auto" %>
       </div>
     <% end %>
   </div>
@@ -28,61 +30,86 @@
     <div class="alert alert-warning">商品が登録されていません。</div>
   <% else %>
 
-<!-- 商品一覧 -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-  <% @products.each do |product| %>
-    <div class="card bg-base-100 shadow">
-      <figure class="h-40 overflow-hidden">
-        <% if product.image.attached? %>
-          <%= image_tag product.image, class: "w-full object-cover h-full" %>
-        <% else %>
-          <div class="flex items-center justify-center w-full h-full text-gray-400">画像なし</div>
-        <% end %>
-      </figure>
-      <div class="card-body p-4">
-        <h2 class="card-title">
-          <%= link_to product.name, product_path(product), class: "link link-hover" %>
-        </h2>
-        <p class="text-sm text-gray-500">
-          カテゴリ: <%= product.category&.titleize || "カテゴリ未設定" %>
-        </p>
+    <!-- 商品一覧 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <% @products.each do |product| %>
+        <div class="card bg-white shadow-sm">
 
-        <% if product.reviews.any? %>
-          <% review = product.reviews.first %>
-
-          <!-- 濃さ -->
-          <div class="flex items-center space-x-1">
-            <% review.richness.to_i.times do %>
-              <span class="text-green-600">🍵</span>
-            <% end %>
-            <span class="text-sm font-bold"><%= review.richness.to_i %>/5</span>
+          <!-- 投稿者アイコン＋名前 -->
+          <div class="flex items-center px-2 py-2 space-x-1">
+            <div class="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center">
+              <svg class="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <span class="text-xs text-gray-500 truncate">
+              <%= product.user&.name || "匿名" %>
+            </span>
           </div>
 
-          <!-- 総合評価 -->
-          <% avg = review.average_score %>
-          <div class="flex items-center space-x-1">
-            <% 5.times do |i| %>
-              <% if i < avg.round %>
-                <span class="text-yellow-500">★</span>
+          <figure class="h-32 overflow-hidden">
+            <%= link_to product_path(product) do %>
+              <% if product.image.attached? %>
+                <%= image_tag product.image, class: "w-full object-contain h-full bg-gray-50 hover:opacity-90 transition-opacity cursor-pointer" %>
               <% else %>
-                <span class="text-gray-300">★</span>
+                <div class="flex items-center justify-center w-full h-full text-gray-400 text-sm bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">画像なし</div>
               <% end %>
             <% end %>
-            <span class="text-sm font-bold"><%= avg %>/5.0</span>
+          </figure>
+
+          <div class="card-body p-3">
+            <h2 class="text-sm font-semibold leading-tight mb-1">
+              <%= link_to product.name, product_path(product), class: "link link-hover line-clamp-2" %>
+            </h2>
+
+            <!-- タグ表示 -->
+            <% if product.tags.any? %>
+              <div class="flex flex-wrap gap-1 mb-1">
+                <% product.tags.first(2).each do |tag| %>
+                  <%= link_to products_path(q: { name_cont: "", category_eq: "", tag: tag.name }), class: "badge badge-xs badge-outline text-xs hover:badge-primary transition-colors cursor-pointer" do %>
+                    <%= tag.name %>
+                  <% end %>
+                <% end %>
+                <% if product.tags.size > 2 %>
+                  <span class="text-xs text-gray-400">+<%= product.tags.size - 2 %></span>
+                <% end %>
+              </div>
+            <% end %>
+
+            <% if product.reviews.any? %>
+              <% review = product.reviews.first %>
+
+              <!-- 濃さ -->
+              <div class="flex items-center space-x-1">
+                <% review.richness.to_i.times do %>
+                  <span class="text-green-600 text-xs">🍵</span>
+                <% end %>
+                <span class="text-xs font-bold"><%= review.richness.to_i %>/5</span>
+              </div>
+            <% else %>
+              <p class="text-gray-400 text-xs">レビューなし</p>
+            <% end %>
+
+            <!-- 投稿日 -->
+            <p class="text-xs text-gray-400">
+              <%= product.created_at.strftime("%y/%m/%d") %>
+            </p>
+
           </div>
-        <% else %>
-          <p class="text-gray-400 text-sm">まだレビューなし</p>
-        <% end %>
-
-      </div>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-</div>
-
 
     <!-- ページネーション -->
-    <div class="mt-6">
-      <%= paginate @products %>
+    <div class="mt-8 flex justify-center">
+      <%= paginate @products,
+          first_label: '&laquo;'.html_safe,
+          last_label: '&raquo;'.html_safe,
+          previous_label: '&lsaquo;'.html_safe,
+          next_label: '&rsaquo;'.html_safe,
+          outer_window: 2,
+          inner_window: 2 %>
     </div>
+
   <% end %>
 </div>

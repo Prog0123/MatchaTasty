@@ -3,7 +3,13 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-  has_many :products
 
+  has_many :products
   has_many :reviews, dependent: :destroy
+
+  has_one_attached :avatar
+
+  # nameフィールドのバリデーション追加
+  validates :name, presence: true
+  validates :name, length: { in: 2..50 }
 end
