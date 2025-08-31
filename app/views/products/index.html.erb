@@ -15,9 +15,13 @@
       </div>
       <div class="flex-1">
         <%= f.label :category_eq, "カテゴリ", class: "label-text" %>
-        <%= f.select :category_eq, options_from_collection_for_select(
-          Product::CATEGORY_TRANSLATIONS.map { |key, value| [value, key] }, 
-          :second, :first), { include_blank: "すべて" }, { class: "select select-bordered w-full" } %>
+        <%= f.select :category_eq,
+              options_for_select(
+                Product::CATEGORY_TRANSLATIONS.map { |key, value| [value, Product.categories[key]] },
+                params.dig(:q, :category_eq)
+              ),
+              { include_blank: "すべて" },
+              { class: "select select-bordered w-full" } %>
       </div>
       <div class="self-end">
         <%= f.submit "検索", class: "btn btn-secondary w-full md:w-auto" %>
@@ -76,15 +80,13 @@
               </div>
             <% end %>
 
-            <% if product.reviews.any? %>
-              <% review = product.reviews.first %>
-
+            <% if product.review %>
               <!-- 濃さ -->
               <div class="flex items-center space-x-1">
-                <% review.richness.to_i.times do %>
+                <% product.review.richness.to_i.times do %>
                   <span class="text-green-600 text-xs">🍵</span>
                 <% end %>
-                <span class="text-xs font-bold"><%= review.richness.to_i %>/5</span>
+                <span class="text-xs font-bold"><%= product.review.richness.to_i %>/5</span>
               </div>
             <% else %>
               <p class="text-gray-400 text-xs">レビューなし</p>
