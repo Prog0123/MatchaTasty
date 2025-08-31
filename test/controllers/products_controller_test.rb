@@ -31,14 +31,16 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
         product: {
           name: "抹茶ロールケーキ",
           category: "cake",
-          store_name: "抹茶堂",
+          shop_name: "抹茶堂",
+          price: 500,
           description: "濃厚な抹茶の味わい",
-          richness: 3.0,
-          sweetness: 2.0,
-          bitterness: 2.5,
-          aftertaste: 3.0,
-          appearance: 4.0,
-          total_rating: 3.0,
+          richness: 3,
+          sweetness: 2,
+          bitterness: 2,
+          aftertaste: 3,
+          appearance: 4,
+          total_rating: 3,
+          comment: "美味しい抹茶ケーキでした",
           user_id: @user.id
         }
       }

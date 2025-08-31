@@ -28,7 +28,7 @@ class ProductsController < ApplicationController
   def validate_step
     @product = Product.new(product_params)
     @product.user = current_user
-    
+
     # レビューの設定
     if @product.review.nil? && params[:product][:review_attributes].present?
       @product.build_review(user: current_user)
@@ -37,15 +37,15 @@ class ProductsController < ApplicationController
     end
 
     @current_step = params[:step].to_i
-    
+
     case @current_step
     when 1
       # ステップ1の検証
       if validate_step_1
         render json: { success: true }
       else
-        render json: { 
-          success: false, 
+        render json: {
+          success: false,
           errors: @product.errors.full_messages,
           step: 1
         }
@@ -58,14 +58,14 @@ class ProductsController < ApplicationController
         errors = []
         errors += @product.errors.full_messages
         errors += @product.review.errors.full_messages if @product.review&.errors&.any?
-        render json: { 
-          success: false, 
+        render json: {
+          success: false,
           errors: errors.uniq,
           step: 2
         }
       end
     else
-      render json: { success: false, errors: ["無効なステップです"] }
+      render json: { success: false, errors: [ "無効なステップです" ] }
     end
   end
 
@@ -136,13 +136,13 @@ class ProductsController < ApplicationController
       price: @product.price
     )
     temp_product.user = current_user
-    
-    step1_attributes = [:name, :shop_name, :category, :price]
+
+    step1_attributes = [ :name, :shop_name, :category, :price ]
     temp_product.valid?
-    
+
     # ステップ1関連のエラーのみを抽出
     step1_errors = temp_product.errors.select { |error| step1_attributes.include?(error.attribute) }
-    
+
     if step1_errors.any?
       @product.errors.clear
       step1_errors.each { |error| @product.errors.add(error.attribute, error.message) }
@@ -154,13 +154,13 @@ class ProductsController < ApplicationController
   # ステップ2の検証
   def validate_step_2
     return false unless @product.review
-    
+
     # レビューの各項目を検証
-    step2_attributes = [:richness, :sweetness, :bitterness, :aftertaste, :appearance]
+    step2_attributes = [ :richness, :sweetness, :bitterness, :aftertaste, :appearance ]
     @product.review.valid?
-    
+
     step2_errors = @product.review.errors.select { |error| step2_attributes.include?(error.attribute) }
-    
+
     step2_errors.any? ? false : true
   end
 

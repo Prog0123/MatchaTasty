@@ -26,7 +26,7 @@ if Rails.env.development?
   # 商品(Product)の初期データを追加
   users = User.all
   categories = Product.categories.keys
-  tags_pool = ["抹茶", "チョコ", "イチゴ", "クリーム", "和菓子", "ケーキ"]
+  tags_pool = [ "抹茶", "チョコ", "イチゴ", "クリーム", "和菓子", "ケーキ" ]
 
   20.times do
     product = Product.create!(
