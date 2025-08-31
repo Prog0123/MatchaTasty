@@ -10,36 +10,37 @@
 
 require "faker"
 
-# ユーザー(User)の初期データを追加
-10.times do
-  User.create!(
-    name: Faker::Name.name,
-    email: Faker::Internet.unique.email,
-    password: "password",
-    password_confirmation: "password"
-  )
+# 開発環境のみでダミーデータを作成
+if Rails.env.development?
+  # ユーザー(User)の初期データを追加
+  10.times do
+    User.create!(
+      name: Faker::Name.name,
+      email: Faker::Internet.unique.email,
+      password: "password",
+      password_confirmation: "password"
+    )
+  end
+  puts "開発環境: ユーザーを作成しました"
+
+  # 商品(Product)の初期データを追加
+  users = User.all
+  categories = Product.categories.keys
+  tags_pool = [ "抹茶", "チョコ", "イチゴ", "クリーム", "和菓子", "ケーキ" ]
+
+  20.times do
+    product = Product.create!(
+      user: users.sample,
+      name: Faker::Dessert.variety,
+      category: categories.sample,
+      description: Faker::Food.description,
+      shop_name: Faker::Restaurant.name,
+      price: rand(300..1500)
+    )
+
+    # タグをランダムに3個付ける
+    product.tag_names = tags_pool.sample(3).join(", ")
+    product.save!
+  end
+  puts "開発環境: 商品を作成しました"
 end
-
-puts "ユーザーの初期データを作成しました"
-
-# 商品(Product)の初期データを追加
-users = User.all
-categories = Product.categories.keys
-tags_pool = [ "抹茶", "チョコ", "イチゴ", "クリーム", "和菓子", "ケーキ" ]
-
-20.times do
-  product = Product.create!(
-    user: users.sample,
-    name: Faker::Dessert.variety,
-    category: categories.sample,
-    description: Faker::Food.description,
-    shop_name: Faker::Restaurant.name,
-    price: rand(300..1500)
-  )
-
-  # タグをランダムに3個付ける
-  product.tag_names = tags_pool.sample(3).join(", ")
-  product.save!
-end
-
-puts "商品の初期データを作成しました"

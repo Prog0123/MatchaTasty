@@ -19,142 +19,136 @@
       <div id="step-circle-<%= index + 1 %>" class="w-8 h-8 rounded-full border-2 border-primary text-primary flex items-center justify-center mb-2 font-bold">
         <%= step[:number] %>
       </div>
-      <div class="text-sm font-semibold text-gray-800"><%= step[:label] %></div>
+      <div class="text-sm font-semibold text-gray-800 step-label-text"><%= step[:label] %></div>
       <div class="text-xs text-gray-500 text-center mt-1"><%= step[:description] %></div>
     </div>
   <% end %>
 </div>
 
 <%= form_with model: @product, local: true, class: "space-y-4" do |f| %>
-  <% if @product.errors.any? %>
-    <div class="alert alert-error">
-      <ul>
-        <% @product.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
   <!-- ステップ1: 商品情報 -->
-<div class="max-w-xl mx-auto card bg-white shadow-md p-6 rounded-xl">
-  <div id="step-1" class="step-panel" data-step="1">
-    <div class="form-control">
-      <%= f.label :name, "商品名", class: "label" %>
-      <%= f.text_field :name, class: "input input-bordered w-full", placeholder: "例：チョコレートケーキ" %>
-    </div>
+  <div class="max-w-xl mx-auto card bg-white shadow-md p-6 rounded-xl">
+    <div id="step-1" class="step-panel" data-step="1">
+      <div class="form-control">
+        <%= f.label :name, "商品名", class: "label" %>
+        <%= f.text_field :name, class: "input input-bordered w-full", placeholder: "例：チョコレートケーキ" %>
+      </div>
 
-    <div class="form-control">
-      <%= f.label :shop_name, "店舗名", class: "label" %>
-      <%= f.text_field :shop_name, class: "input input-bordered w-full", placeholder: "例：パティスリー○○" %>
-    </div>
+      <div class="form-control">
+        <%= f.label :shop_name, "店舗名", class: "label" %>
+        <%= f.text_field :shop_name, class: "input input-bordered w-full", placeholder: "例：パティスリー○○" %>
+      </div>
 
-    <div class="form-control">
-      <%= f.label :category, "カテゴリ", class: "label" %>
-      <%= f.select :category, [
-        ["ケーキ", "cake"],
-        ["デザート", "dessert"],
-        ["アイス", "ice_cream"],
-        ["和菓子", "japanese_sweets"],
-        ["ドリンク", "drink"],
-        ["パフェ", "parfait"],
-        ["その他", "other"]
-      ], { prompt: "カテゴリを選択してください" }, { class: "select select-bordered w-full" } %>
-    </div>
+      <div class="form-control">
+        <%= f.label :category, "カテゴリ", class: "label" %>
+        <%= f.select :category, [
+          ["ケーキ", "cake"],
+          ["デザート", "dessert"],
+          ["アイス", "ice_cream"],
+          ["和菓子", "japanese_sweets"],
+          ["ドリンク", "drink"],
+          ["パフェ", "parfait"],
+          ["その他", "other"]
+        ], { prompt: "カテゴリを選択してください" }, { class: "select select-bordered w-full" } %>
+      </div>
 
-    <div class="form-control">
-      <%= f.label :price, "価格（円）", class: "label" %>
-      <div class="relative">
-        <%= f.number_field :price, class: "input input-bordered w-full pr-12", placeholder: "500", min: 0 %>
-        <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">円</span>
+      <div class="form-control">
+        <%= f.label :price, "価格（円）", class: "label" %>
+        <div class="relative">
+          <%= f.number_field :price, class: "input input-bordered w-full pr-12", placeholder: "500", min: 0 %>
+          <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">円</span>
+        </div>
+      </div>
+
+      <div class="form-control">
+        <%= f.label :tag_names, "タグ（カンマ区切り）", class: "label" %>
+        <%= f.text_field :tag_names, value: @product.tag_names, class: "input input-bordered w-full", placeholder: "例：チョコレート, 濃厚, おすすめ" %>
+      </div>
+
+      <div class="flex justify-end mt-4">
+        <button type="button" class="next-button btn btn-primary mt-4">次へ</button>
       </div>
     </div>
 
-    <div class="form-control">
-      <%= f.label :tag_names, "タグ（カンマ区切り）", class: "label" %>
-      <%= f.text_field :tag_names, value: @product.tag_names, class: "input input-bordered w-full", placeholder: "例：チョコレート, 濃厚, おすすめ" %>
-    </div>
+    <!-- ステップ2 & 3: レビュー入力 + コメント -->
+    <%= f.fields_for :review do |rf| %>
+      <!-- ステップ2: 味覚評価 -->
+      <div id="step-2" class="step-panel hidden" data-step="2">
+        <div class="divider">レビュー情報</div>
 
-    <div class="flex justify-end mt-4">
-      <button type="button" class="next-button btn btn-primary mt-4">次へ</button>
-    </div>
-  </div>
+        <% [
+          ["濃さ", :richness, "★", true],
+          ["甘さ", :sweetness, "★", true],
+          ["苦味", :bitterness, "★", true],
+          ["後味", :aftertaste, "★", true],
+          ["見た目", :appearance, "★", true]
+        ].each do |label, name, symbol| %>
+          <div class="form-control mb-4"
+               data-controller="stars"
+               data-stars-name="product[review_attributes][<%= name %>]"
+               data-stars-symbol-value="<%= symbol %>">
 
-<!-- ステップ2 & 3: レビュー入力 + コメント -->
-<%= f.fields_for :review do |rf| %>
-  <!-- ステップ2: 味覚評価 -->
-  <div id="step-2" class="step-panel hidden" data-step="2">
-    <div class="divider">レビュー情報</div>
-    <% [
-      ["濃さ", :richness, "★", true],
-      ["苦味", :bitterness, "★", true],
-      ["甘さ", :sweetness, "★", true],
-      ["後味", :aftertaste, "★", true],
-      ["見た目", :appearance, "★", true]
-    ].each do |label, name, symbol| %>
-      <div class="form-control mb-4"
-           data-controller="stars"
-           data-stars-name="product[review_attributes][<%= name %>]"
-           data-stars-symbol-value="<%= symbol %>">
+          <!-- 各要素を個別に調整可能なコンテナ -->
+          <div class="flex items-center w-full relative">
+            <!-- ラベル部分 -->
+            <div class="ml-10 w-20 flex-shrink-0">
+              <label class="label">
+                <span class="label-text font-medium"><%= label %></span>
+              </label>
+            </div>
 
-      <!-- 各要素を個別に調整可能なコンテナ -->
-      <div class="flex items-center w-full relative">
-        <!-- ラベル部分 -->
-        <div class="ml-10 w-20 flex-shrink-0">
+            <!-- 星評価部分 -->
+            <div class="ml-19 flex space-x-1">
+              <% 5.times do |i| %>
+                <i class="star cursor-pointer text-2xl text-gray-400 hover:text-yellow-400 transition-colors"
+                   data-action="click->stars#select"
+                   data-value="<%= i + 1 %>"><%= symbol %></i>
+              <% end %>
+            </div>
+
+            <!-- 数値表示部分 -->
+            <div class="ml-20 flex items-center bg-gray-100 px-3 py-1 rounded-lg">
+              <span class="text-xl font-bold text-gray-700 min-w-[2rem]" data-stars-target="display">
+                <%= @product.review&.send(name) || 0 %>
+              </span>
+              <span class="text-sm text-gray-500 ml-1">/ 5</span>
+            </div>
+          </div>
+          
+          <%= rf.hidden_field name, 
+              value: @product.review&.send(name) || 0,
+              data: { stars_target: "input" } %>
+        </div>
+        <% end %>
+
+        <!-- ステップ2のナビゲーション -->
+        <div class="flex justify-between mt-4">
+          <button type="button" class="prev-button btn btn-secondary">戻る</button>
+          <button type="button" class="next-button btn btn-primary">次へ</button>
+        </div>
+      </div>
+
+      <!-- ステップ3: 画像とコメント -->
+      <div id="step-3" class="step-panel hidden" data-step="3">
+        <div class="form-control">
+          <%= f.label :image, "画像", class: "label" %>
+          <%= f.file_field :image, class: "file-input file-input-bordered w-full", accept: "image/*" %>
           <label class="label">
-            <span class="label-text font-medium"><%= label %></span>
+            <span class="label-text-alt text-gray-500">JPG、PNG、GIF形式の画像をアップロードしてください</span>
           </label>
         </div>
 
-        <!-- 星評価部分 -->
-        <div class="ml-19 flex space-x-1">
-          <% 5.times do |i| %>
-            <i class="star cursor-pointer text-2xl text-gray-400 hover:text-yellow-400 transition-colors"
-               data-action="click->stars#select"
-               data-value="<%= i + 1 %>"><%= symbol %></i>
-          <% end %>
+        <div class="form-control">
+          <%= rf.label :comment, "コメント", class: "label" %>
+          <%= rf.text_area :comment, class: "textarea textarea-bordered w-full h-32", placeholder: "商品の感想や気づいたことを自由にお書きください..." %>
         </div>
 
-        <!-- 数値表示部分 -->
-        <div class="ml-20 flex items-center bg-gray-100 px-3 py-1 rounded-lg">
-          <span class="text-xl font-bold text-gray-700 min-w-[2rem]" data-stars-target="display">0</span>
-          <span class="text-sm text-gray-500 ml-1">/ 5</span>
+        <!-- ステップ3のナビゲーション -->
+        <div class="flex justify-between mt-4">
+          <button type="button" class="prev-button btn btn-secondary">戻る</button>
+          <%= f.submit "商品を投稿する", class: "btn btn-primary" %>
         </div>
       </div>
-      
-      <%= rf.hidden_field name, data: { stars_target: "input" } %>
-    </div>
-  <% end %>
-
-    <!-- ステップ2のナビゲーション -->
-    <div class="flex justify-between mt-4">
-      <button type="button" class="prev-button btn btn-secondary">戻る</button>
-      <button type="button" class="next-button btn btn-primary">次へ</button>
-    </div>
-  </div>
-
-  <!-- ステップ3: 画像とコメント -->
-  <div id="step-3" class="step-panel hidden" data-step="3">
-    <div class="form-control">
-      <%= f.label :image, "画像", class: "label" %>
-      <%= f.file_field :image, class: "file-input file-input-bordered w-full", accept: "image/*" %>
-      <label class="label">
-        <span class="label-text-alt text-gray-500">JPG、PNG、GIF形式の画像をアップロードしてください</span>
-      </label>
-    </div>
-
-    <div class="form-control">
-      <%= rf.label :comment, "コメント", class: "label" %>
-      <%= rf.text_area :comment, class: "textarea textarea-bordered w-full h-32", placeholder: "商品の感想や気づいたことを自由にお書きください..." %>
-    </div>
-
-    <!-- ステップ3のナビゲーション -->
-    <div class="flex justify-between mt-4">
-      <button type="button" class="prev-button btn btn-secondary">戻る</button>
-      <%= f.submit "商品を投稿する", class: "btn btn-primary" %>
-    </div>
+    <% end %>
   </div>
 <% end %>
-
-  <% end %>
-</div>

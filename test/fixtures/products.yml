@@ -7,8 +7,8 @@ one:
   store_name: MyString
   description: MyText
   richness: 1.5
-  bitterness: 1.5
   sweetness: 1.5
+  bitterness: 1.5
   aftertaste: 1.5
   appearance: 1.5
   total_rating: 1.5
@@ -20,8 +20,8 @@ two:
   store_name: MyString
   description: MyText
   richness: 1.5
-  bitterness: 1.5
   sweetness: 1.5
+  bitterness: 1.5
   aftertaste: 1.5
   appearance: 1.5
   total_rating: 1.5

@@ -2,7 +2,7 @@ class Product < ApplicationRecord
   belongs_to :user
   # ActiveStorageで画像添付
   has_one_attached :image
-  # 追記
+  # レビューの関連付け
   has_one :review, dependent: :destroy
   accepts_nested_attributes_for :review
 
@@ -14,8 +14,8 @@ class Product < ApplicationRecord
   # 保存時にタグの関連を更新
   after_save :assign_tags
 
-  # レビューの関連付け
-  has_many :reviews, dependent: :destroy
+  # バリデーション用のステップ管理
+  attr_accessor :current_step
 
   # タグ付け
   enum category: {
@@ -39,8 +39,8 @@ class Product < ApplicationRecord
     "other" => "その他"
   }.freeze
 
-  validates :name, presence: true
-  validates :category, presence: true
+  validates :name, :shop_name, :category, :price, presence: true
+  validates :price, numericality: { greater_than: 0 }
 
   # タグ名を取得するメソッド
   def tag_names

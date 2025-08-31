@@ -21,8 +21,7 @@ ja:
         richness: "濃さ"
         sweetness: "甘さ"
         bitterness: "苦味"
-        flavor: "風味"
-        aroma: "香り"
+        aftertaste: "後味"
         appearance: "見た目"
         score: "総合評価"
     enums:
