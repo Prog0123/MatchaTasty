@@ -14,8 +14,10 @@ ja:
         created_at: "投稿日"
         updated_at: "更新日"
       user:
-        name: "名前"
+        name: "ユーザー名"
         email: "メールアドレス"
+        password: "パスワード"
+        password_confirmation: "パスワード（確認）"
       review:
         comment: "コメント"
         richness: "濃さ"
@@ -24,6 +26,30 @@ ja:
         aftertaste: "後味"
         appearance: "見た目"
         score: "総合評価"
+    errors:
+      messages:
+        blank: "を入力してください"
+        too_short: "は%{count}文字以上で入力してください"
+        too_long: "は%{count}文字以内で入力してください"
+        invalid: "は不正な値です"
+        confirmation: "と%{attribute}の入力が一致しません"
+        taken: "はすでに存在します"
+      models:
+        user:
+          attributes:
+            name:
+              blank: "を入力してください"
+              too_short: "は%{count}文字以上で入力してください"
+              too_long: "は%{count}文字以内で入力してください"
+            email:
+              blank: "を入力してください"
+              invalid: "の形式が正しくありません"
+              taken: "はすでに登録されています"
+            password:
+              blank: "を入力してください"
+              too_short: "は%{count}文字以上で入力してください"
+            password_confirmation:
+              confirmation: "とパスワードの入力が一致しません"
     enums:
       product:
         category:
@@ -34,6 +60,13 @@ ja:
           drink: "ドリンク"
           parfait: "パフェ"
           other: "その他"
+  
+  # エラーメッセージの設定を追加
+  errors:
+    messages:
+      not_saved:
+        one: "%{count}件のエラーが発生したため %{resource} は保存されませんでした。"
+        other: "%{count}件のエラーが発生したため %{resource} は保存されませんでした。"
   
   # フォームのラベルやボタンテキスト
   helpers:
@@ -76,3 +109,21 @@ ja:
       previous: "‹ 前へ"
       next: "次へ ›"
       truncate: "..."
+
+  # Devise関連の翻訳
+  devise:
+    registrations:
+      new:
+        sign_up: "アカウント登録"
+    sessions:
+      new:
+        sign_in: "ログイン"
+        remember_me: "ログイン状態を保存"
+    shared:
+      minimum_password_length:
+        one: "%{count}文字以上で入力してください"
+        other: "%{count}文字以上で入力してください"
+      links:
+        sign_in: "ログイン"
+        sign_up: "アカウント登録"
+        forgot_password: "パスワードを忘れた場合"
