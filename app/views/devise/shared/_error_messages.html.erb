@@ -1,8 +1,10 @@
+<%# 共通エラーメッセージ表示部分 %>
 <% if resource.errors.any? %>
   <div class="alert alert-error mb-4" data-turbo-cache="false">
     <ul class="list-disc list-inside">
-      <% resource.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+      <% priority = ["name", "email", "password"] %>
+      <% resource.errors.sort_by { |e| priority.index(e.attribute.to_s) || priority.size }.each do |error| %>
+        <li><%= error.full_message %></li>
       <% end %>
     </ul>
   </div>

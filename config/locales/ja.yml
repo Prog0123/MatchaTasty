@@ -44,7 +44,7 @@ ja:
             email:
               blank: "を入力してください"
               invalid: "の形式が正しくありません"
-              taken: "はすでに登録されています"
+              taken: "は登録できませんでした。"
             password:
               blank: "を入力してください"
               too_short: "は%{count}文字以上で入力してください"
@@ -126,4 +126,3 @@ ja:
       links:
         sign_in: "ログイン"
         sign_up: "アカウント登録"
-        forgot_password: "パスワードを忘れた場合"
