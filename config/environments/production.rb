@@ -3,6 +3,10 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  config.hosts << "matcha-lwl5.onrender.com"
+  config.hosts << "matchatasty.com"  # 独自ドメインを追加
+  config.hosts << "www.matchatasty.com"  # サブドメインを追加
+
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
@@ -102,5 +106,4 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-  config.hosts << "matchatasty.com"  # 独自ドメインを追加
 end
