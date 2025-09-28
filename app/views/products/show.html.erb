@@ -101,30 +101,9 @@
               <% end %>
             </div>
           </div>
-
-          <!-- Xシェアボタンと投稿日 -->
-          <div class="max-w-sm mt-10 space-y-4">
-            <!-- Xシェアボタン -->
-            <div>
-              <button class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" disabled>
-                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-                Xでシェア（準備中）
-              </button>
-            </div>
-
-            <!-- 投稿日 -->
-            <div>
-              <h4 class="font-semibold text-gray-700 text-base mb-10"></h4>
-              <p class="text-gray-600 text-base">
-                <%= @product.created_at.strftime("%Y年%m月%d日") %>
-              </p>
-            </div>
-          </div>
         </div>
 
-        <!-- レーダーチャートとレビュー -->
+        <!-- 右側：レーダーチャートとレビュー -->
         <div class="w-full md:w-1/2 space-y-6">
           <!-- レーダーチャート -->
           <div class="flex justify-center">
@@ -158,6 +137,26 @@
               <p class="text-base text-gray-600"><%= simple_format(@review.comment) %></p>
             </div>
           <% end %>
+
+          <!-- Xシェアボタンと投稿日（横並び表示） -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <!-- Xシェアボタン -->
+            <div>
+              <button class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" disabled>
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                Xでシェア（準備中）
+              </button>
+            </div>
+
+            <!-- 投稿日 -->
+            <div>
+              <p class="text-gray-600 text-base">
+                <%= @product.created_at.strftime("%Y年%m月%d日") %>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     <% end %>
