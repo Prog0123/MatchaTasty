@@ -4,6 +4,10 @@ ja:
       confirmed: "メールアドレスが確認できました。"
       send_instructions: "メールアドレス確認のメールを数分以内に送信します。"
       send_paranoid_instructions: "あなたのメールアドレスが登録済みの場合、本人確認用のメールが数分以内に送信されます。"
+    reset:
+      new:
+        forgot_your_password: 'パスワードをお忘れですか?'
+        send_me_reset_password_instructions: '確認メールを送信'
     failure:
       already_authenticated: "すでにログインしています。"
       inactive: "アカウントが有効化されていません。メールに記載された手順にしたがって、アカウントを有効化してください。"
