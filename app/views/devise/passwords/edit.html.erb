@@ -1,25 +1,36 @@
-<h2>Change your password</h2>
+<div class="max-w-md mx-auto mt-10">
+  <div class="card bg-white p-8 shadow-xl">
+    <h2 class="text-2xl font-bold mb-6 text-center">
+      新しいパスワードの設定
+    </h2>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
+    <%= form_with model: resource, as: resource_name, url: password_path(resource_name), method: :put, class: "space-y-4", local: true do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :reset_password_token %>
 
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
+      <!-- 新しいパスワード -->
+      <div class="form-control">
+        <%= f.label :password, "新しいパスワード", class: "label label-text font-semibold" %>
+        <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "input input-bordered w-full", placeholder: "8文字以上" %>
+        <label class="label">
+          <span class="label-text-alt text-gray-500">
+            <%= @minimum_password_length ? "#{@minimum_password_length}文字以上" : "" %>
+          </span>
+        </label>
+      </div>
+
+      <!-- パスワード確認 -->
+      <div class="form-control">
+        <%= f.label :password_confirmation, "パスワード（確認）", class: "label label-text font-semibold" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "input input-bordered w-full", placeholder: "もう一度入力してください" %>
+      </div>
+
+      <!-- 変更ボタン -->
+      <%= f.submit "パスワードを変更する", class: "btn btn-primary w-full" %>
     <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
-  </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+    <div class="mt-4 text-center">
+      <%= link_to "ログイン画面に戻る", new_session_path(resource_name), class: "link link-primary text-sm" %>
+    </div>
   </div>
-
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>
