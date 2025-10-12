@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
+  # 古いブラウザからのアクセスブロック
   allow_browser versions: :modern
 
   # Devise用のストロングパラメータ設定を追加
