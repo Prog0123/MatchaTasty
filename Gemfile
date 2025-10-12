@@ -72,6 +72,8 @@ gem "dotenv-rails"
 
 gem "rails-i18n"
 
+gem "sendgrid-actionmailer"
+
 group :development do
   gem "letter_opener_web"
 end
