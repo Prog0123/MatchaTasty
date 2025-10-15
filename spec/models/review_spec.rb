@@ -21,7 +21,7 @@ RSpec.describe Review, type: :model do
       expect(review).to be_valid
     end
 
-    [:richness, :sweetness, :bitterness, :aftertaste, :appearance].each do |score_attr|
+    [ :richness, :sweetness, :bitterness, :aftertaste, :appearance ].each do |score_attr|
       it "requires #{score_attr}" do
         review = Review.new(valid_attributes.merge(score_attr => nil))
         expect(review).not_to be_valid
