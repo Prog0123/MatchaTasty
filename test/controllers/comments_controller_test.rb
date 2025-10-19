@@ -11,9 +11,9 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create comment" do
     sign_in @user
-    
+
     assert_difference("Comment.count", 1) do
-      post review_comments_path(@review), 
+      post review_comments_path(@review),
            params: { comment: { text: "テストコメント" } },
            headers: { "Accept" => "text/vnd.turbo-stream.html" }
     end
@@ -24,7 +24,7 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
   test "should destroy comment" do
     sign_in @user
     comment = @review.comments.create(text: "テストコメント", user: @user)
-    
+
     assert_difference("Comment.count", -1) do
       delete review_comment_path(@review, comment),
              headers: { "Accept" => "text/vnd.turbo-stream.html" }
