@@ -94,15 +94,24 @@
               <p class="text-gray-400 text-xs">レビューなし</p>
             <% end %>
 
-            <!-- 投稿日といいねボタン（横並び） -->
+            <!-- 投稿日といいね・コメント数（横並び） -->
             <div class="flex items-center justify-between">
               <p class="text-xs text-gray-400">
                 <%= product.created_at.strftime("%y/%m/%d") %>
               </p>
               <% if product.review %>
-                <%= render "likes/like_button", review: product.review, size: "sm" %>
+                <div class="flex items-center space-x-1">
+                  <!-- いいねボタン -->
+                  <%= render "likes/like_button", review: product.review, size: "sm" %>
+                  <!-- コメント数 -->
+                  <div class="flex items-center space-x-1">
+                    <span class="text-sm">💬</span>
+                    <span class="text-xs text-gray-600"><%= product.review.comments.count %></span>
+                  </div>
+                </div>
               <% end %>
             </div>
+
           </div>
         </div>
       <% end %>

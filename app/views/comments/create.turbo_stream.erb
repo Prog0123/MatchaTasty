@@ -1,0 +1,7 @@
+<%= turbo_stream.prepend "comments-list" do %>
+  <%= render "comments/comment", comment: @comment %>
+<% end %>
+
+<%= turbo_stream.update "comment-form" do %>
+  <%= render "comments/comment_form", review: @review %>
+<% end %>
