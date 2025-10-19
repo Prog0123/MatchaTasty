@@ -1,0 +1,66 @@
+<% size ||= "md" %>
+<% size_classes = size == "sm" ? "text-lg" : "text-2xl" %>
+
+<div id="like-section-<%= review.id %>" class="like-button-wrapper inline-block">
+  <% if user_signed_in? %>
+    <% current_like = review.likes.find_by(user: current_user) %>
+    
+    <% if current_like %>
+      <!-- いいね済み状態（赤いハート） -->
+      <%= button_to review_like_path(review, current_like),
+          method: :delete,
+          class: "like-btn like-btn-active flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 transition-colors",
+          data: { turbo: true } do %>
+        <span class="like-heart #{size_classes}">❤️</span>
+        <span class="like-count font-semibold text-gray-700"><%= review.likes_count %></span>
+      <% end %>
+    <% else %>
+      <!-- いいねしていない状態（白いハート） -->
+      <%= button_to review_likes_path(review),
+          method: :post,
+          class: "like-btn like-btn-inactive flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 transition-colors",
+          data: { turbo: true } do %>
+        <span class="like-heart #{size_classes}">🤍</span>
+        <span class="like-count font-semibold text-gray-700"><%= review.likes_count %></span>
+      <% end %>
+    <% end %>
+  <% else %>
+    <!-- ログインしていないユーザー向け -->
+    <%= link_to new_user_session_path, 
+        class: "like-btn like-btn-inactive flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 transition-colors" do %>
+      <span class="like-heart #{size_classes}">🤍</span>
+      <span class="like-count font-semibold text-gray-700"><%= review.likes_count %></span>
+    <% end %>
+  <% end %>
+</div>
+
+<!-- スタイル -->
+<style>
+  .like-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .like-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .like-btn-inactive:hover {
+    background-color: rgba(254, 226, 226, 0.5);
+  }
+
+  .like-btn-active:hover {
+    background-color: rgba(254, 226, 226, 0.8);
+  }
+
+  .like-heart {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  .like-btn:hover .like-heart {
+    transform: scale(1.1);
+  }
+</style>

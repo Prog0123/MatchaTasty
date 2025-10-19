@@ -1,6 +1,7 @@
 class Review < ApplicationRecord
   belongs_to :product
   belongs_to :user
+  has_many :likes, dependent: :destroy
 
   # バリデーション用のステップ管理
   attr_accessor :current_step
@@ -19,6 +20,15 @@ class Review < ApplicationRecord
     scores = [ richness, sweetness, bitterness, aftertaste, appearance ].compact
     return 0.0 if scores.empty?
     (scores.sum.to_f / scores.size).round(1)
+  end
+
+  def liked_by?(user)
+    return false if user.nil?
+    likes.exists?(user_id: user.id)
+  end
+
+  def likes_count
+    likes.count
   end
 
   private

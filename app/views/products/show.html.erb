@@ -13,13 +13,16 @@
     <% end %>
 
     <!-- 投稿者名 -->
-    <div class="flex items-center space-x-2 text-gray-500 text-base mb-6">
+    <div class="flex items-center space-x-4 text-gray-500 text-base mb-6">
       <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
         <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
         </svg>
       </div>
       <span><%= @product.user&.name || "匿名" %></span>
+      <span class="text-gray-400 text-sm">
+        <%= @product.created_at.strftime("%Y年%m月%d日 %H:%M") %>
+      </span>
     </div>
 
     <!-- 商品名 -->
@@ -138,10 +141,10 @@
             </div>
           <% end %>
 
-          <!-- Xシェアボタンと投稿日（横並び表示） -->
+          <!-- Xシェアボタン・投稿日・いいねボタン（横並び表示） -->
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <!-- Xシェアボタン -->
-            <div>
+            <div  class="sm:ml-auto">
               <button class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" disabled>
                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -150,12 +153,12 @@
               </button>
             </div>
 
-            <!-- 投稿日 -->
-            <div>
-              <p class="text-gray-600 text-base">
-                <%= @product.created_at.strftime("%Y年%m月%d日") %>
-              </p>
-            </div>
+            <!-- いいねボタン（詳細ページ用） -->
+            <% if @review.present? %>
+              <%= render "likes/like_button", review: @review, size: "md" %>
+            <% end %>
+          </div>
+
           </div>
         </div>
       </div>

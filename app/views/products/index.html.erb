@@ -78,6 +78,8 @@
                   <span class="text-xs text-gray-400">+<%= product.tags.size - 2 %></span>
                 <% end %>
               </div>
+            <% else %>
+              <p class="text-xs text-gray-400 mb-1">タグなし</p>
             <% end %>
 
             <% if product.review %>
@@ -92,11 +94,15 @@
               <p class="text-gray-400 text-xs">レビューなし</p>
             <% end %>
 
-            <!-- 投稿日 -->
-            <p class="text-xs text-gray-400">
-              <%= product.created_at.strftime("%y/%m/%d") %>
-            </p>
-
+            <!-- 投稿日といいねボタン（横並び） -->
+            <div class="flex items-center justify-between">
+              <p class="text-xs text-gray-400">
+                <%= product.created_at.strftime("%y/%m/%d") %>
+              </p>
+              <% if product.review %>
+                <%= render "likes/like_button", review: product.review, size: "sm" %>
+              <% end %>
+            </div>
           </div>
         </div>
       <% end %>
