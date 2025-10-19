@@ -173,14 +173,38 @@
 
   </div>
 
-  <!-- コメント一覧 -->
-  <div class="bg-white rounded-lg shadow p-6 max-w-4xl mx-auto">
-    <h2 class="text-2xl font-semibold mb-4">コメント(準備中)</h2>
-    <p class="text-gray-500">まだコメントはありません。</p>
-  </div>
+<!-- コメント一覧 -->
+<div class="bg-white rounded-lg shadow p-6 max-w-4xl mx-auto">
+  <h2 class="text-2xl font-semibold mb-6">コメント</h2>
+
+  <% if @review.present? %>
+    <div class="space-y-6">
+      <!-- コメント投稿フォーム -->
+      <div id="comment-form">
+        <%= render "comments/comment_form", review: @review %>
+      </div>
+
+      <!-- コメント一覧 -->
+      <div id="comments-list" class="space-y-4">
+        <% if @review.comments.newest_first.any? %>
+          <p class="text-sm text-gray-600 mb-4">
+            <%= @review.comments.count %>件のコメント
+          </p>
+          <%= render @review.comments.newest_first, collection: @review.comments.newest_first, as: :comment %>
+        <% else %>
+          <p class="text-center text-gray-500 py-8">
+            まだコメントはありません。
+          </p>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <p class="text-gray-500">レビューがないため、コメント機能は利用できません。</p>
+  <% end %>
+</div>
 
   <!-- 戻るボタン -->
-  <div class="max-w-4xl mx-auto flex">
+  <div class="max-w-4xl mx-auto flex mt-4 mb-4">
     <%= link_to "商品一覧に戻る", products_path, class: "btn btn-outline" %>
   </div>
 </div>
