@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "likes/create"
+  get "likes/destroy"
   devise_for :users, controllers: {
     passwords: "users/passwords"
   }
@@ -17,6 +19,10 @@ Rails.application.routes.draw do
     collection do
       post :validate_step  # ステップ検証用のルート
     end
+  end
+
+  resources :reviews do
+    resources :likes, only: [ :create, :destroy ]
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
