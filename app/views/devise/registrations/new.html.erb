@@ -4,6 +4,16 @@
     <%= t('devise.registrations.new.sign_up') %>
   </h2>
 
+  <!-- Googleログイン -->
+  <div class="mb-6">
+    <%= button_to user_google_oauth2_omniauth_authorize_path, method: :post, class: "btn btn-outline w-full", data: { turbo: false } do %>
+      <i class="fab fa-google mr-2"></i>
+      <%= t('devise.registrations.new.google_sign_up', default: 'Googleで登録') %>
+    <% end %>
+  </div>
+
+  <div class="divider">または</div>
+
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
 

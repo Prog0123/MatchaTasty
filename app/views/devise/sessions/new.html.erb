@@ -1,9 +1,19 @@
 <!-- ログイン画面 -->
 <div class="max-w-md mx-auto mt-10">
-  <div class="card bg-white p-8 shadow-xl p-6">
+  <div class="card bg-white p-8 shadow-xl">
     <h2 class="text-2xl font-bold mb-6 text-center">
       <%= t('devise.sessions.new.sign_in') %>
     </h2>
+
+    <!-- Googleログイン -->
+    <div class="mb-6">
+      <%= button_to user_google_oauth2_omniauth_authorize_path, method: :post, class: "btn btn-outline w-full", data: { turbo: false } do %>
+        <i class="fab fa-google mr-2"></i>
+        <%= t('devise.sessions.new.google_sign_in', default: 'Googleでログイン') %>
+      <% end %>
+    </div>
+
+    <div class="divider">または</div>
 
     <%= form_with model: resource, as: resource_name, url: session_path(resource_name), class: "space-y-4", local: true do |f| %>
       <!-- メールアドレス -->
