@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
 
   # Devise用のストロングパラメータ設定を追加
   before_action :configure_permitted_parameters, if: :devise_controller?
+  helper_method :current_user
 
   protected
 

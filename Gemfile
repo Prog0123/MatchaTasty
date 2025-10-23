@@ -74,6 +74,12 @@ gem "rails-i18n"
 
 gem "sendgrid-actionmailer"
 
+gem "omniauth"
+
+gem "omniauth-google-oauth2"
+
+gem "omniauth-rails_csrf_protection"
+
 group :development do
   gem "letter_opener_web"
 end
