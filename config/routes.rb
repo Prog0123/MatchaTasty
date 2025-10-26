@@ -29,6 +29,13 @@ Rails.application.routes.draw do
     resources :comments, only: [ :create, :destroy ]
   end
 
+  # マイページ
+  get "mypage", to: "users#show", as: :mypage
+  get "mypage/reviews", to: "users#reviews", as: :reviews_mypage
+  get "mypage/liked_reviews", to: "users#liked_reviews", as: :liked_reviews_mypage
+  get "mypage/edit", to: "users#edit", as: :edit_mypage
+  patch "mypage/update", to: "users#update", as: :update_mypage
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check

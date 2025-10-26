@@ -1,0 +1,126 @@
+<%= render 'mypage_header' %>
+
+<div class="container mx-auto p-4 max-w-2xl">
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-xl mb-4">プロフィール編集</h2>
+
+      <%= form_with model: @user, url: update_mypage_path, method: :patch, local: true, class: "space-y-6" do |f| %>
+        
+        <!-- アバター画像 -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">プロフィール画像</span>
+          </label>
+          
+          <div class="flex items-center space-x-4">
+            <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+              <% if @user.avatar.attached? %>
+                <%= image_tag @user.avatar, class: "w-full h-full object-cover", id: "avatar-preview" %>
+              <% elsif @user.image_url.present? %>
+                <%= image_tag @user.image_url, class: "w-full h-full object-cover", id: "avatar-preview" %>
+              <% else %>
+                <svg class="w-12 h-12 text-gray-600" fill="currentColor" viewBox="0 0 20 20" id="avatar-preview">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                </svg>
+              <% end %>
+            </div>
+            
+            <div>
+              <%= f.file_field :avatar, 
+                  accept: "image/*",
+                  class: "file-input file-input-bordered file-input-sm w-full max-w-xs",
+                  onchange: "previewAvatar(event)" %>
+              <p class="text-xs text-gray-500 mt-2">JPG, PNG, GIF (最大5MB)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 名前 -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">名前 <span class="text-error">*</span></span>
+          </label>
+          <%= f.text_field :name, 
+              class: "input input-bordered w-full #{@user.errors[:name].any? ? 'input-error' : ''}", 
+              placeholder: "山田太郎" %>
+          <% if @user.errors[:name].any? %>
+            <label class="label">
+              <span class="label-text-alt text-error"><%= @user.errors[:name].first %></span>
+            </label>
+          <% end %>
+        </div>
+
+        <!-- メールアドレス -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">メールアドレス <span class="text-error">*</span></span>
+          </label>
+          <%= f.email_field :email, 
+              class: "input input-bordered w-full #{@user.errors[:email].any? ? 'input-error' : ''}", 
+              placeholder: "example@example.com" %>
+          <% if @user.errors[:email].any? %>
+            <label class="label">
+              <span class="label-text-alt text-error"><%= @user.errors[:email].first %></span>
+            </label>
+          <% end %>
+          <% if @user.provider.present? %>
+            <label class="label">
+              <span class="label-text-alt text-info">
+                <i class="fas fa-info-circle"></i> Google連携アカウントです
+              </span>
+            </label>
+          <% end %>
+        </div>
+
+        <!-- アカウント情報 -->
+        <div class="divider">アカウント情報</div>
+        
+        <div class="bg-base-200 rounded-lg p-4 space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-gray-600">登録日:</span>
+            <span class="font-semibold"><%= @user.created_at.strftime("%Y年%m月%d日") %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">投稿数:</span>
+            <span class="font-semibold"><%= @user.reviews.count %>件</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-600">いいね数:</span>
+            <span class="font-semibold"><%= @user.liked_reviews.count %>件</span>
+          </div>
+        </div>
+
+        <!-- ボタン -->
+        <div class="flex gap-4 pt-4">
+          <%= f.submit "更新する", class: "btn btn-primary flex-1" %>
+          <%= link_to "キャンセル", reviews_mypage_path, class: "btn btn-ghost flex-1" %>
+        </div>
+
+      <% end %>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function previewAvatar(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('avatar-preview');
+        if (preview.tagName === 'IMG') {
+          preview.src = e.target.result;
+        } else {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'w-full h-full object-cover';
+          img.id = 'avatar-preview';
+          preview.parentNode.replaceChild(img, preview);
+        }
+      }
+      reader.readAsDataURL(file);
+    }
+  }
+</script>

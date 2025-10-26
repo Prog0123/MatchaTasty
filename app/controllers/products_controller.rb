@@ -121,7 +121,13 @@ class ProductsController < ApplicationController
 
   def destroy
     @product.destroy
-    redirect_to products_path, notice: "投稿を削除しました。"
+    # マイページの場合のみマイページにリダイレクト
+    if params[:from] == "mypage"
+      redirect_to reviews_mypage_path, notice: "投稿を削除しました。"
+    else
+      # それ以外は商品一覧ページにリダイレクト
+      redirect_to products_path, notice: "投稿を削除しました。"
+    end
   end
 
   private

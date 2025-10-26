@@ -1,0 +1,80 @@
+<%= render 'mypage_header' %>
+
+<div class="container mx-auto p-4">
+  <% if @reviews.empty? %>
+    <div class="alert alert-info">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <span>まだ投稿がありません。新しい商品をレビューしてみましょう！</span>
+    </div>
+    <div class="text-center mt-4">
+      <%= link_to "新規投稿", new_product_path, class: "btn btn-secondary" %>
+    </div>
+  <% else %>
+    <!-- 投稿一覧グリッド -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+      <% @reviews.each do |review| %>
+        <% product = review.product %>
+        <div class="card bg-white shadow-sm hover:shadow-md transition-shadow">
+          
+          <figure class="h-40 overflow-hidden">
+            <%= link_to product_path(product) do %>
+              <% if product.image.attached? %>
+                <%= image_tag product.image, class: "w-full object-contain h-full bg-gray-50 hover:opacity-90 transition-opacity" %>
+              <% else %>
+                <div class="flex items-center justify-center w-full h-full text-gray-400 bg-gray-50">画像なし</div>
+              <% end %>
+            <% end %>
+          </figure>
+
+          <div class="card-body p-4">
+            <h2 class="text-sm font-semibold leading-tight mb-2">
+              <%= link_to product.name, product_path(product), class: "link link-hover line-clamp-2" %>
+            </h2>
+
+            <!-- 評価表示 -->
+            <div class="space-y-1 mb-3">
+              <div class="flex items-center space-x-1">
+                <% review.richness.to_i.times do %>
+                  <span class="text-green-600 text-xs">🍵</span>
+                <% end %>
+                <span class="text-xs font-bold"><%= review.richness.to_i %>/5</span>
+              </div>
+              <div class="text-xs text-gray-500">
+                平均スコア: <%= review.score.round(1) %>
+              </div>
+            </div>
+
+            <!-- 投稿日といいね・コメント数 -->
+            <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+              <span><%= review.created_at.strftime("%Y/%m/%d") %></span>
+              <div class="flex items-center space-x-2">
+                <span>❤️ <%= review.likes_count %></span>
+                <span>💬 <%= review.comments.count %></span>
+              </div>
+            </div>
+
+            <!-- アクションボタン -->
+            <div class="flex gap-2">
+              <%= link_to "編集", edit_product_path(product), 
+                  class: "btn btn-sm btn-outline btn-primary flex-1" %>
+              <%= link_to "削除", product_path(product, from: 'mypage'), 
+                  data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" },
+                  class: "btn btn-sm btn-outline btn-error flex-1" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- ページネーション -->
+    <div class="mt-8 flex justify-center">
+      <%= paginate @reviews,
+          first_label: '&laquo;'.html_safe,
+          last_label: '&raquo;'.html_safe,
+          previous_label: '&lsaquo;'.html_safe,
+          next_label: '&rsaquo;'.html_safe,
+          outer_window: 2,
+          inner_window: 2 %>
+    </div>
+  <% end %>
+</div>

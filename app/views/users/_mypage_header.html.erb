@@ -1,0 +1,43 @@
+<div class="container mx-auto p-4">
+  <!-- ユーザー情報 -->
+  <div class="card bg-base-100 shadow-sm mb-6">
+    <div class="card-body p-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+          <% if @user.avatar.attached? %>
+            <%= image_tag @user.avatar, class: "w-full h-full rounded-full object-cover" %>
+          <% elsif @user.image_url.present? %>
+            <%= image_tag @user.image_url, class: "w-full h-full rounded-full object-cover" %>
+          <% else %>
+            <svg class="w-8 h-8 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+            </svg>
+          <% end %>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold"><%= @user.name %></h1>
+          <p class="text-sm text-gray-500"><%= @user.email %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- タブナビゲーション -->
+  <div class="tabs tabs-boxed bg-base-100 shadow-sm mb-6">
+    <%= link_to reviews_mypage_path, 
+        class: "tab #{@active_tab == 'reviews' ? 'tab-active' : ''}" do %>
+      <span class="mr-2">📝</span>
+      投稿一覧 (<%= current_user.reviews.count %>)
+    <% end %>
+    <%= link_to liked_reviews_mypage_path, 
+        class: "tab #{@active_tab == 'likes' ? 'tab-active' : ''}" do %>
+      <span class="mr-2">❤️</span>
+      いいね一覧 (<%= current_user.liked_reviews.count %>)
+    <% end %>
+    <%= link_to edit_mypage_path, 
+        class: "tab #{@active_tab == 'edit' ? 'tab-active' : ''}" do %>
+      <span class="mr-2">⚙️</span>
+      プロフィール編集
+    <% end %>
+  </div>
+</div>
