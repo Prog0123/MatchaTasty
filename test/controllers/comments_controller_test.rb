@@ -7,29 +7,24 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
     @other_user = users(:two)
     @review = reviews(:one)
+    sign_in @user
   end
 
   test "should create comment" do
-    sign_in @user
-
-    assert_difference("Comment.count", 1) do
-      post review_comments_path(@review),
-           params: { comment: { text: "テストコメント" } },
-           headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    assert_difference("Comment.count") do
+      post review_comments_url(@review), params: {
+        comment: { text: "Test comment" }
+      }, as: :turbo_stream
     end
-
     assert_response :success
   end
 
   test "should destroy comment" do
-    sign_in @user
-    comment = @review.comments.create(text: "テストコメント", user: @user)
+    comment = comments(:one)  # フィクスチャのコメントを使用
 
     assert_difference("Comment.count", -1) do
-      delete review_comment_path(@review, comment),
-             headers: { "Accept" => "text/vnd.turbo-stream.html" }
+      delete review_comment_url(comment.review, comment), as: :turbo_stream
     end
-
     assert_response :success
   end
 end

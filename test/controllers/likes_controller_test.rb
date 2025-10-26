@@ -7,27 +7,26 @@ class LikesControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
     @other_user = users(:two)
     @review = reviews(:one)
+    sign_in @user
+
+    # テスト前に既存のいいねを削除
+    Like.where(user: @user, review: @review).destroy_all
   end
 
   test "should create like" do
-    sign_in @other_user
-
-    assert_difference("Like.count", 1) do
-      post review_likes_path(@review), headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    assert_difference("Like.count") do
+      post review_likes_url(@review), as: :turbo_stream
     end
-
     assert_response :success
   end
 
   test "should destroy like" do
-    sign_in @user
-    @review.likes.where(user: @user).destroy_all
-    like = @review.likes.create(user: @user)
+    # テスト内でいいねを作成
+    like = @user.likes.create!(review: @review)
 
     assert_difference("Like.count", -1) do
-      delete review_like_path(@review, like), headers: { "Accept" => "text/vnd.turbo-stream.html" }
+      delete review_like_url(like.review, like), as: :turbo_stream
     end
-
     assert_response :success
   end
 end

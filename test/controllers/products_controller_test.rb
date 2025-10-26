@@ -6,6 +6,7 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @product = products(:one)
     @user = users(:one)
+    sign_in @user  # Deviseのヘルパーを使用
   end
 
   test "should get index" do

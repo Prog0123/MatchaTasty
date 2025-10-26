@@ -53,24 +53,42 @@
 
         <!-- メールアドレス -->
         <div class="form-control">
-          <label class="label">
+        <label class="label">
             <span class="label-text font-semibold">メールアドレス <span class="text-error">*</span></span>
-          </label>
-          <%= f.email_field :email, 
-              class: "input input-bordered w-full #{@user.errors[:email].any? ? 'input-error' : ''}", 
-              placeholder: "example@example.com" %>
-          <% if @user.errors[:email].any? %>
+        </label>
+        <%= f.email_field :email, 
+            class: "input input-bordered w-full #{@user.errors[:email].any? ? 'input-error' : ''}", 
+            placeholder: "example@example.com" %>
+        <% if @user.errors[:email].any? %>
             <label class="label">
-              <span class="label-text-alt text-error"><%= @user.errors[:email].first %></span>
+            <span class="label-text-alt text-error"><%= @user.errors[:email].first %></span>
             </label>
-          <% end %>
-          <% if @user.provider.present? %>
+        <% end %>
+        
+        <!-- 確認待ちメールアドレスの表示 -->
+        <% if @user.unconfirmed_email.present? %>
             <label class="label">
-              <span class="label-text-alt text-info">
+            <span class="label-text-alt text-warning">
+                <i class="fas fa-exclamation-triangle"></i> 
+                新しいメールアドレスの確認待ちです。
+                確認メールをご確認ください。
+            </span>
+            </label>
+        <% end %>
+        
+        <% if @user.provider.present? %>
+            <label class="label">
+            <span class="label-text-alt text-info">
                 <i class="fas fa-info-circle"></i> Google連携アカウントです
-              </span>
+            </span>
             </label>
-          <% end %>
+        <% end %>
+        
+        <label class="label">
+            <span class="label-text-alt text-gray-500">
+            メールアドレスを変更すると、確認メールが送信されます。
+            </span>
+        </label>
         </div>
 
         <!-- アカウント情報 -->
