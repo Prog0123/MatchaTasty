@@ -22,7 +22,7 @@
 
             <!-- デスクトップドロップダウン -->
             <div class="absolute right-0 mt-2 w-40 bg-white text-black rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-              <%= link_to "マイページ", "#", class: "block px-4 py-2 hover:bg-gray-100 rounded-t-lg" %>
+              <%= link_to "マイページ", mypage_path, class: "block px-4 py-2 hover:bg-gray-100 rounded-t-lg" %>
               <%= link_to "ログアウト", destroy_user_session_path,
                     data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
                     class: "block px-4 py-2 hover:bg-gray-100 rounded-b-lg" %>
@@ -51,7 +51,7 @@
         
         <% if user_signed_in? %>
           <div class="border-t border-emerald-500 pt-3 mt-3">
-            <%= link_to "マイページ", "#", class: "block px-2 py-2 hover:text-emerald-200" %>
+            <%= link_to "マイページ", mypage_path, class: "block px-2 py-2 hover:text-emerald-200" %>
             <%= link_to "ログアウト", destroy_user_session_path,
                   data: { turbo_method: :delete, turbo_confirm: "ログアウトしますか？" },
                   class: "block px-2 py-2 hover:text-emerald-200" %>
