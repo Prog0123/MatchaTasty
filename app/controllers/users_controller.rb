@@ -39,6 +39,9 @@ class UsersController < ApplicationController
     @user = current_user
     @active_tab = "edit"
 
+    # メールアドレスが変更された場合の処理
+    email_changed = user_params[:email].present? && user_params[:email] != @user.email
+
     if @user.update(user_params)
       redirect_to edit_mypage_path, notice: "プロフィールを更新しました。"
     else

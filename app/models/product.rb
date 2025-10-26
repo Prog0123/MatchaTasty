@@ -18,7 +18,7 @@ class Product < ApplicationRecord
   attr_accessor :current_step
 
   # タグ付け
-  enum category: {
+  enum :category, {
     cake: 0,
     dessert: 1,
     ice_cream: 2,

@@ -4,6 +4,13 @@ ja:
       confirmed: "メールアドレスが確認できました。"
       send_instructions: "メールアドレス確認のメールを数分以内に送信します。"
       send_paranoid_instructions: "あなたのメールアドレスが登録済みの場合、本人確認用のメールが数分以内に送信されます。"
+    mailer:
+      confirmation_instructions:
+        subject: "メールアドレス確認のお願い"
+      email_changed:
+        subject: "メールアドレス変更のお知らせ"
+      reconfirmation_instructions:
+        subject: "メールアドレス再確認のお願い"
     reset:
       new:
         forgot_your_password: 'パスワードをお忘れですか?'
