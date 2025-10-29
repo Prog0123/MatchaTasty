@@ -1,0 +1,175 @@
+<div class="container mx-auto p-4 space-y-6">
+  <!-- ヘッダー -->
+  <div class="text-center">
+    <h1 class="text-3xl font-bold flex items-center justify-center">
+      <span class="text-4xl mr-3">🏆</span>
+      ランキング
+    </h1>
+  </div>
+
+  <!-- タブナビゲーション -->
+  <div class="tabs tabs-boxed bg-base-100 shadow-sm">
+    <%= link_to rankings_path(type: 'likes'), 
+        class: "tab #{@ranking_type == 'likes' ? 'tab-active' : ''}" do %>
+      <span class="mr-2">❤️</span>
+      いいね数
+    <% end %>
+    <%= link_to rankings_path(type: 'score'), 
+        class: "tab #{@ranking_type == 'score' ? 'tab-active' : ''}" do %>
+      <span class="mr-2">⭐</span>
+      評価スコア
+    <% end %>
+    <%= link_to rankings_path(type: 'recent'), 
+        class: "tab #{@ranking_type == 'recent' ? 'tab-active' : ''}" do %>
+      <span class="mr-2">🆕</span>
+      新着順
+    <% end %>
+  </div>
+
+  <% if @products.empty? %>
+    <div class="alert alert-info">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <span>まだ商品が登録されていません。</span>
+    </div>
+  <% else %>
+    <!-- ランキングリスト -->
+    <div class="space-y-4">
+      <% @products.each_with_index do |product, index| %>
+        <% review = product.review %>
+        <% rank = (params[:page].to_i > 0 ? params[:page].to_i - 1 : 0) * 20 + index + 1 %>
+        
+        <div class="card bg-white shadow-md hover:shadow-xl transition-all duration-300 border-l-4 <%= rank <= 3 ? 'border-yellow-400' : 'border-gray-200' %>">
+          <div class="card-body p-0">
+            <div class="flex items-center">
+              <!-- ランキング番号（縦帯デザイン） -->
+              <div class="flex-shrink-0 w-20 h-full flex flex-col items-center justify-center py-6 <%= rank <= 3 ? 'bg-gradient-to-b from-yellow-50 to-yellow-100' : 'bg-gray-50' %>">
+                <% if rank == 1 %>
+                  <div style="font-size: 42px; line-height: 1;">🥇</div>
+                <% elsif rank == 2 %>
+                  <div style="font-size: 42px; line-height: 1;">🥈</div>
+                <% elsif rank == 3 %>
+                  <div style="font-size: 42px; line-height: 1;">🥉</div>
+                <% else %>
+                  <div class="font-bold text-gray-400" style="font-size: 28px; line-height: 1;">
+                    <%= rank %>
+                  </div>
+                <% end %>
+                <div class="text-xs text-gray-500 mt-1 font-medium">位</div>
+              </div>
+
+              <!-- メインコンテンツエリア -->
+              <div class="flex-1 p-4">
+                <div class="flex gap-4 items-center">
+                  <!-- 商品画像 -->
+                  <div class="flex-shrink-0">
+                    <%= link_to product_path(product), class: "block" do %>
+                      <div class="w-48 h-36 overflow-hidden rounded-xl bg-gray-50 shadow-sm hover:shadow-md transition-shadow flex items-center justify-center">
+                        <% if product.image.attached? %>
+                          <%= image_tag product.image, class: "w-full h-full object-cover hover:scale-105 transition-transform duration-300" %>
+                        <% else %>
+                          <div class="text-gray-400">
+                            <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                          </div>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+
+                  <!-- 商品詳細情報 -->
+                  <div class="flex-1 min-w-0">
+                    <!-- 商品名とお店 -->
+                    <h2 class="text-2xl font-bold mb-2 line-clamp-1">
+                      <%= link_to product.name, product_path(product), class: "link link-hover text-gray-800 hover:text-blue-600 transition-colors" %>
+                    </h2>
+                    <div class="flex items-center gap-2 mb-3">
+                      <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                      </svg>
+                      <p class="text-sm text-gray-600 font-medium truncate">
+                        <%= product.shop_name %>
+                      </p>
+                    </div>
+                    
+                    <!-- レビューコメント -->
+                    <% if review.comment.present? %>
+                      <div class="bg-gray-50 rounded-lg p-3 mb-3 max-w-md">
+                        <p class="text-sm text-gray-700 line-clamp-2 break-words">
+                          "<%= review.comment.truncate(100) %>"
+                        </p>
+                      </div>
+                    <% end %>
+
+                    <!-- 投稿者情報 -->
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                      <div class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden ring-1 ring-gray-300">
+                        <% if product.user.avatar.attached? %>
+                          <%= image_tag product.user.avatar, class: "w-full h-full object-cover" %>
+                        <% elsif product.user.image_url.present? %>
+                          <%= image_tag product.user.image_url, class: "w-full h-full object-cover" %>
+                        <% else %>
+                          <svg class="w-3 h-3 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                          </svg>
+                        <% end %>
+                      </div>
+                      <span class="font-medium"><%= product.user.name %></span>
+                      <span>•</span>
+                      <span><%= product.created_at.strftime("%Y年%m月%d日") %></span>
+                    </div>
+                  </div>
+
+                  <!-- マップエリア -->
+                  <div class="flex-shrink-0 w-48">
+                    <div class="w-full h-32 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
+                      <div class="text-center">
+                        <svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span class="text-xs text-gray-400 font-medium">Google Map<br>Coming Soon</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- スコア表示エリア -->
+                  <div class="flex-shrink-0">
+                    <div class="text-center px-6 py-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 min-w-[110px]">
+                      <% case @ranking_type %>
+                      <% when 'likes' %>
+                        <div class="text-3xl mb-2">❤️</div>
+                        <div class="text-3xl font-bold text-red-600 mb-1"><%= product.likes_count %></div>
+                        <div class="text-xs text-gray-600 font-semibold uppercase tracking-wide">Likes</div>
+                      <% when 'score' %>
+                        <div class="text-3xl mb-2">⭐</div>
+                        <div class="text-3xl font-bold text-yellow-600 mb-1"><%= review.score.round(1) %></div>
+                        <div class="text-xs text-gray-600 font-semibold uppercase tracking-wide">Score</div>
+                      <% when 'recent' %>
+                        <div class="text-3xl mb-2">🆕</div>
+                        <div class="text-lg font-bold text-green-600 mb-1"><%= product.created_at.strftime("%m/%d") %></div>
+                        <div class="text-xs text-gray-600 font-semibold"><%= product.created_at.strftime("%Y") %></div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- ページネーション -->
+    <div class="mt-8 flex justify-center">
+      <%= paginate @products,
+          first_label: '&laquo;'.html_safe,
+          last_label: '&raquo;'.html_safe,
+          previous_label: '&lsaquo;'.html_safe,
+          next_label: '&rsaquo;'.html_safe,
+          outer_window: 2,
+          inner_window: 2,
+          params: { type: @ranking_type } %>
+    </div>
+  <% end %>
+</div>
