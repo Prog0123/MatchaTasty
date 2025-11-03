@@ -10,3 +10,7 @@ application.register("hello", HelloController)
 // Importing the ReviewRadarController
 import ReviewRadarController from "./review_radar_controller"
 application.register("review-radar", ReviewRadarController)
+
+// Xシェアコントローラーを追加
+import TwitterShareController from "./twitter_share_controller"
+application.register("twitter-share", TwitterShareController)

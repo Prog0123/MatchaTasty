@@ -90,6 +90,7 @@ class ProductsController < ApplicationController
   def show
     @review = @product.review
     @reviews = @product.review.present? ? [ @product.review ] : []
+
     # 平均スコアの計算
     if @review.present?
       scores = [
@@ -101,9 +102,42 @@ class ProductsController < ApplicationController
       ].compact
 
       @average_score = (scores.sum.to_f / scores.size).round(1) if scores.any?
-      # レーダーチャート用のデータを準備
       @chart_data = prepare_radar_chart_data
     end
+
+    # Xシェア用のデータを準備
+    @share_url = product_url(@product)
+    @share_text = helpers.twitter_share_text_for_product(@product, @review)
+    @share_hashtags = helpers.build_share_hashtags(@product)
+
+    # OGP設定
+    og_config = {
+      title: @product.name,
+      description: build_og_description,
+      type: "website",
+      url: product_url(@product),
+      site_name: "MatchaTasty"
+    }
+
+    twitter_config = {
+      card: "summary_large_image",
+      title: @product.name,
+      description: build_og_description
+    }
+
+    # 画像がある場合のみ追加
+    if @product.image.attached?
+      og_config[:image] = url_for(@product.image)
+      twitter_config[:image] = url_for(@product.image)
+    end
+
+    # OGPメタタグの設定
+    set_meta_tags(
+      title: @product.name,
+      description: build_og_description,
+      og: og_config,
+      twitter: twitter_config
+    )
   end
 
   def edit
@@ -228,5 +262,21 @@ class ProductsController < ApplicationController
       tag_names = params[:product][:tag_names].split(",").map(&:strip).uniq
       @product.tags = tag_names.map { |name| Tag.find_or_initialize_by(name:) }
     end
+  end
+  # OGP用のディスクリプション生成
+  def build_og_description
+    desc = ""
+    desc += "#{@product.shop_name}の" if @product.shop_name.present?
+    desc += @product.name
+
+    if @review && @average_score
+      desc += " | 総合評価: #{@average_score}/5.0"
+    end
+
+    if @product.respond_to?(:category_japanese)
+      desc += " | #{@product.category_japanese}"
+    end
+
+    desc
   end
 end
