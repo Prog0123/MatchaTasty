@@ -107,7 +107,7 @@ class ProductsController < ApplicationController
 
   def show
     @review = @product.review
-    @reviews = @product.review.present? ? [@product.review] : []
+    @reviews = @product.review.present? ? [ @product.review ] : []
 
     # 平均スコアの計算
     if @review.present?
@@ -128,7 +128,7 @@ class ProductsController < ApplicationController
     @share_text = helpers.twitter_share_text_for_product(@product, @review)
     @share_hashtags = helpers.build_share_hashtags(@product)
 
-    # OGP画像の準備（修正版）
+    # OGP画像の準備
     og_image = generate_og_image
 
     # OGPメタタグの設定
@@ -138,7 +138,7 @@ class ProductsController < ApplicationController
       og: {
         title: @product.name,
         description: build_og_description,
-        type: "article",  # 商品詳細ページなのでarticleに変更
+        type: "article",
         url: product_url(@product),
         image: og_image,
         site_name: "MatchaTasty"
@@ -259,8 +259,8 @@ class ProductsController < ApplicationController
     if @product.image.attached?
       begin
         # 画像をOGP推奨サイズ（1200x630）にリサイズ
-        variant = @product.image.variant(resize_to_fill: [1200, 630])
-        
+        variant = @product.image.variant(resize_to_fill: [ 1200, 630 ])
+
         # 本番環境では完全なHTTPS URLを生成
         if Rails.env.production?
           # S3の直接URLを使用（より確実）
@@ -272,7 +272,7 @@ class ProductsController < ApplicationController
       rescue StandardError => e
         # リサイズに失敗した場合はオリジナル画像
         Rails.logger.warn "OGP画像のリサイズに失敗: #{e.message}"
-        
+
         if Rails.env.production?
           @product.image.url
         else
@@ -283,9 +283,9 @@ class ProductsController < ApplicationController
       # デフォルト画像のURLを返す
       # 本番環境では完全なHTTPS URLを返す
       if Rails.env.production?
-        "https://#{ENV['APP_HOST'] || 'matchatasty.com'}/assets/og_default.png"
+        "https://#{ENV["APP_HOST"] || "matchatasty.com"}/assets/og_default.png"
       else
-        helpers.asset_url('og_default.png')
+        helpers.asset_url("og_default.png")
       end
     end
   end
