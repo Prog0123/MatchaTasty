@@ -15,7 +15,8 @@ module SocialShareHelper
   end
 
   def twitter_share_text_for_product(product, review)
-    base_text = "#{product.name}を食べました🍵"
+    # シンプルで読みやすいテキスト
+    base_text = "#{product.name}をレビュー🍵"
 
     if review.present?
       scores = [
@@ -28,7 +29,10 @@ module SocialShareHelper
 
       if scores.any?
         average_score = (scores.sum.to_f / scores.size).round(1)
-        base_text += "\n評価: #{average_score}/5.0 ⭐"
+        stars = "⭐" * average_score.round
+
+        # 評価を追加（スペースで区切る）
+        base_text += " #{stars} #{average_score}/5.0"
       end
     end
 
@@ -57,7 +61,7 @@ module SocialShareHelper
     end
     hashtags << category_hashtag
 
-    # 「MatchaTasty」を追加（あなたのアプリ名）
+    # アプリ名をハッシュタグに
     hashtags << "MatchaTasty"
 
     hashtags.first(3) # 最大3つまでに制限
