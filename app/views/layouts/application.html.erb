@@ -4,13 +4,22 @@
     <title><%= content_for(:title) || "MatchaTasty" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     
-    <!-- PWA関連のメタタグ（両方含める） -->
+    <!-- PWA関連のメタタグ -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     
+    <!-- OGPメタタグ（display_meta_tagsが動的に生成） -->
     <%= display_meta_tags site: 'MatchaTasty',
                           reverse: true,
-                          separator: '|' %>
+                          separator: '|',
+                          description: '抹茶スイーツのレビューサイト',
+                          og: {
+                            site_name: 'MatchaTasty',
+                            type: 'website'
+                          },
+                          twitter: {
+                            card: 'summary_large_image'
+                          } %>
     
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>

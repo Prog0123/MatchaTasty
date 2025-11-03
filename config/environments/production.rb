@@ -119,4 +119,13 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # routes.default_url_optionsを設定（product_url等で完全URLを生成）
+  Rails.application.routes.default_url_options = {
+    host: ENV["APP_HOST"] || "matchatasty.com",
+    protocol: "https"
+  }
+
+  # Active Storageの画像URLを適切に生成
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
 end

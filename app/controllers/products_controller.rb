@@ -17,11 +17,29 @@ class ProductsController < ApplicationController
       tag_name = params[:q][:tag]
       @products = @products.joins(:tags).where(tags: { name: tag_name })
     end
+
+    # トップページ用のOGP設定
+    set_meta_tags(
+      title: "抹茶スイーツレビュー",
+      description: "抹茶スイーツの味わいを5つの項目で評価・レビューできるサイトです。濃さ、甘さ、苦味、後味、見た目を詳しくレビューして共有しましょう。",
+      og: {
+        title: "MatchaTasty - 抹茶スイーツレビューサイト",
+        description: "抹茶スイーツの味わいを5つの項目で評価・レビューできるサイトです。",
+        type: "website",
+        url: products_url,
+        site_name: "MatchaTasty"
+      },
+      twitter: {
+        card: "summary",
+        title: "MatchaTasty - 抹茶スイーツレビューサイト",
+        description: "抹茶スイーツの味わいを5つの項目で評価・レビュー"
+      }
+    )
   end
 
   def new
     @product = Product.new
-    @product.build_review(user: current_user)  # userを明示的に設定
+    @product.build_review(user: current_user)
   end
 
   # ステップ検証用のアクション
@@ -102,6 +120,7 @@ class ProductsController < ApplicationController
       ].compact
 
       @average_score = (scores.sum.to_f / scores.size).round(1) if scores.any?
+      # レーダーチャート用のデータを準備
       @chart_data = prepare_radar_chart_data
     end
 
@@ -110,33 +129,27 @@ class ProductsController < ApplicationController
     @share_text = helpers.twitter_share_text_for_product(@product, @review)
     @share_hashtags = helpers.build_share_hashtags(@product)
 
-    # OGP設定
-    og_config = {
-      title: @product.name,
-      description: build_og_description,
-      type: "website",
-      url: product_url(@product),
-      site_name: "MatchaTasty"
-    }
-
-    twitter_config = {
-      card: "summary_large_image",
-      title: @product.name,
-      description: build_og_description
-    }
-
-    # 画像がある場合のみ追加
-    if @product.image.attached?
-      og_config[:image] = url_for(@product.image)
-      twitter_config[:image] = url_for(@product.image)
-    end
+    # OGP画像の準備
+    og_image = generate_og_image
 
     # OGPメタタグの設定
     set_meta_tags(
       title: @product.name,
       description: build_og_description,
-      og: og_config,
-      twitter: twitter_config
+      og: {
+        title: @product.name,
+        description: build_og_description,
+        type: "website",
+        url: product_url(@product),
+        image: og_image,
+        site_name: "MatchaTasty"
+      }.compact,
+      twitter: {
+        card: "summary_large_image",
+        title: @product.name,
+        description: build_og_description,
+        image: og_image
+      }.compact
     )
   end
 
@@ -242,9 +255,51 @@ class ProductsController < ApplicationController
     }
   end
 
+  # OGP用の画像URLを生成
+  def generate_og_image
+    if @product.image.attached?
+      begin
+        # 画像をOGP推奨サイズ（1200x630）にリサイズ
+        url_for(@product.image.variant(resize_to_fill: [ 1200, 630 ]))
+      rescue StandardError => e
+        # リサイズに失敗した場合はオリジナル画像
+        Rails.logger.warn "OGP画像のリサイズに失敗: #{e.message}"
+        url_for(@product.image)
+      end
+    else
+      # 画像がない場合はnil（Xが自動でfaviconなどを使用）
+      nil
+    end
+  end
+
+  # OGP用のディスクリプション生成
+  def build_og_description
+    parts = []
+
+    # 店舗名
+    parts << @product.shop_name if @product.shop_name.present?
+
+    # カテゴリ
+    parts << @product.category_japanese if @product.respond_to?(:category_japanese)
+
+    # 評価
+    if @review && @average_score
+      parts << "総合評価 #{@average_score}/5.0"
+    end
+
+    # 価格（helpers経由で呼び出す）
+    if @product.price.present?
+      parts << "#{helpers.number_with_delimiter(@product.price)}円"
+    end
+
+    # 結合（最大160文字程度に制限）
+    description = parts.join(" | ")
+    description.length > 160 ? description[0..157] + "..." : description
+  end
+
   def product_params
     params.require(:product).permit(
-      :name, :category, :image, :shop_name, :price,  # shop_nameとpriceをトップレベルに移動
+      :name, :category, :image, :shop_name, :price,
       review_attributes: [ :id, :richness, :bitterness, :sweetness, :aftertaste, :appearance, :score, :comment, :taste_level ]
     )
   end
@@ -262,21 +317,5 @@ class ProductsController < ApplicationController
       tag_names = params[:product][:tag_names].split(",").map(&:strip).uniq
       @product.tags = tag_names.map { |name| Tag.find_or_initialize_by(name:) }
     end
-  end
-  # OGP用のディスクリプション生成
-  def build_og_description
-    desc = ""
-    desc += "#{@product.shop_name}の" if @product.shop_name.present?
-    desc += @product.name
-
-    if @review && @average_score
-      desc += " | 総合評価: #{@average_score}/5.0"
-    end
-
-    if @product.respond_to?(:category_japanese)
-      desc += " | #{@product.category_japanese}"
-    end
-
-    desc
   end
 end
