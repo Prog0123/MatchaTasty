@@ -254,34 +254,29 @@ class ProductsController < ApplicationController
     }
   end
 
-  # OGP用の画像URLを生成（本番環境対応版）
+  # OGP用の画像URLを生成（公開URL版）
   def generate_og_image
     if @product.image.attached?
       begin
-        # 画像をOGP推奨サイズ（1200x630）にリサイズ
-        variant = @product.image.variant(resize_to_fill: [ 1200, 630 ])
-
-        # 本番環境では完全なHTTPS URLを生成
         if Rails.env.production?
-          # S3の直接URLを使用（より確実）
-          variant.processed.url
-        else
-          # 開発環境ではrails_blob_urlを使用
-          rails_blob_url(variant, only_path: false)
-        end
-      rescue StandardError => e
-        # リサイズに失敗した場合はオリジナル画像
-        Rails.logger.warn "OGP画像のリサイズに失敗: #{e.message}"
-
-        if Rails.env.production?
-          @product.image.url
+          # S3の公開URLを直接使用（署名なし）
+          # バケット名とキーから公開URLを構築
+          key = @product.image.key
+          "https://matchatasty.s3.ap-northeast-1.amazonaws.com/#{key}"
         else
           rails_blob_url(@product.image, only_path: false)
         end
+      rescue StandardError => e
+        Rails.logger.warn "OGP画像の取得に失敗: #{e.message}"
+
+        if Rails.env.production?
+          "https://#{ENV["APP_HOST"] || "matchatasty.com"}/assets/og_default.png"
+        else
+          helpers.asset_url("og_default.png")
+        end
       end
     else
-      # デフォルト画像のURLを返す
-      # 本番環境では完全なHTTPS URLを返す
+      # デフォルト画像
       if Rails.env.production?
         "https://#{ENV["APP_HOST"] || "matchatasty.com"}/assets/og_default.png"
       else
