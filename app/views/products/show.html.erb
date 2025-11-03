@@ -141,23 +141,47 @@
             </div>
           <% end %>
 
-          <!-- Xシェアボタン・投稿日・いいねボタン（横並び表示） -->
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <!-- Xシェアボタン -->
-            <div  class="sm:ml-auto">
-              <button class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" disabled>
-                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-                Xでシェア（準備中）
-              </button>
-            </div>
+            <!-- Xシェアボタン・投稿日・いいねボタン（横並び表示） -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <!-- Xシェアボタン -->
+              <% if @review.present? %>
+                <div class="sm:ml-auto">
+                  <% 
+                    share_url_encoded = CGI.escape(@share_url || '')
+                    share_text_encoded = CGI.escape(@share_text || '')
+                    share_hashtags_encoded = (@share_hashtags || []).join(',')
+                    twitter_url = "https://twitter.com/intent/tweet?text=#{share_text_encoded}&url=#{share_url_encoded}&hashtags=#{share_hashtags_encoded}"
+                  %>
+                  
+                  <%= link_to twitter_url, 
+                              target: '_blank', 
+                              rel: 'noopener noreferrer',
+                              class: "inline-flex items-center px-4 py-2 bg-black hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md",
+                              style: "background-color: #000000; color: #ffffff; text-decoration: none;" do %>
+                    <svg class="w-4 h-4 mr-2" style="width: 16px; height: 16px; margin-right: 8px;" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    Xでシェア
+                  <% end %>
+                </div>
+              <% else %>
+                <div class="sm:ml-auto">
+                  <button class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" 
+                          style="background-color: #d1d5db; color: #6b7280;" 
+                          disabled>
+                    <svg class="w-4 h-4 mr-2" style="width: 16px; height: 16px; margin-right: 8px;" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    Xでシェア（レビュー未登録）
+                  </button>
+                </div>
+              <% end %>
 
-            <!-- いいねボタン（詳細ページ用） -->
-            <% if @review.present? %>
-              <%= render "likes/like_button", review: @review, size: "md" %>
-            <% end %>
-          </div>
+              <!-- いいねボタン（詳細ページ用） -->
+              <% if @review.present? %>
+                <%= render "likes/like_button", review: @review, size: "md" %>
+              <% end %>
+            </div>
 
           </div>
         </div>
