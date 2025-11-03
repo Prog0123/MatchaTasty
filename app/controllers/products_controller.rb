@@ -107,7 +107,7 @@ class ProductsController < ApplicationController
 
   def show
     @review = @product.review
-    @reviews = @product.review.present? ? [ @product.review ] : []
+    @reviews = @product.review.present? ? [@product.review] : []
 
     # 平均スコアの計算
     if @review.present?
@@ -120,7 +120,6 @@ class ProductsController < ApplicationController
       ].compact
 
       @average_score = (scores.sum.to_f / scores.size).round(1) if scores.any?
-      # レーダーチャート用のデータを準備
       @chart_data = prepare_radar_chart_data
     end
 
@@ -129,7 +128,7 @@ class ProductsController < ApplicationController
     @share_text = helpers.twitter_share_text_for_product(@product, @review)
     @share_hashtags = helpers.build_share_hashtags(@product)
 
-    # OGP画像の準備
+    # OGP画像の準備（修正版）
     og_image = generate_og_image
 
     # OGPメタタグの設定
@@ -139,7 +138,7 @@ class ProductsController < ApplicationController
       og: {
         title: @product.name,
         description: build_og_description,
-        type: "website",
+        type: "article",  # 商品詳細ページなのでarticleに変更
         url: product_url(@product),
         image: og_image,
         site_name: "MatchaTasty"
@@ -255,20 +254,39 @@ class ProductsController < ApplicationController
     }
   end
 
-  # OGP用の画像URLを生成
+  # OGP用の画像URLを生成（本番環境対応版）
   def generate_og_image
     if @product.image.attached?
       begin
         # 画像をOGP推奨サイズ（1200x630）にリサイズ
-        url_for(@product.image.variant(resize_to_fill: [ 1200, 630 ]))
+        variant = @product.image.variant(resize_to_fill: [1200, 630])
+        
+        # 本番環境では完全なHTTPS URLを生成
+        if Rails.env.production?
+          # S3の直接URLを使用（より確実）
+          variant.processed.url
+        else
+          # 開発環境ではrails_blob_urlを使用
+          rails_blob_url(variant, only_path: false)
+        end
       rescue StandardError => e
         # リサイズに失敗した場合はオリジナル画像
         Rails.logger.warn "OGP画像のリサイズに失敗: #{e.message}"
-        url_for(@product.image)
+        
+        if Rails.env.production?
+          @product.image.url
+        else
+          rails_blob_url(@product.image, only_path: false)
+        end
       end
     else
-      # 画像がない場合はnil（Xが自動でfaviconなどを使用）
-      nil
+      # デフォルト画像のURLを返す
+      # 本番環境では完全なHTTPS URLを返す
+      if Rails.env.production?
+        "https://#{ENV['APP_HOST'] || 'matchatasty.com'}/assets/og_default.png"
+      else
+        helpers.asset_url('og_default.png')
+      end
     end
   end
 
@@ -287,7 +305,7 @@ class ProductsController < ApplicationController
       parts << "総合評価 #{@average_score}/5.0"
     end
 
-    # 価格（helpers経由で呼び出す）
+    # 価格
     if @product.price.present?
       parts << "#{helpers.number_with_delimiter(@product.price)}円"
     end
