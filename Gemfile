@@ -91,3 +91,5 @@ group :test do
 end
 
 gem "meta-tags"
+
+gem "image_processing", "~> 1.2"
