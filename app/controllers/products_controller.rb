@@ -1,6 +1,5 @@
 class ProductsController < ApplicationController
-  # ログインページへリダイレクト
-  before_action :authenticate_user!, only: [ :new, :create, :edit, :update, :destroy, :validate_step ]
+  before_action :authenticate_user!, only: [ :new, :create, :edit, :update, :destroy, :validate_step, :confirm, :back_to_edit ]
   before_action :set_product, only: [ :show, :edit, :update, :destroy ]
   before_action :authorize_user!, only: [ :edit, :update, :destroy ]
 
@@ -12,13 +11,11 @@ class ProductsController < ApplicationController
                 .page(params[:page])
                 .per(10)
 
-    # タグによる絞り込み
     if params[:q] && params[:q][:tag].present?
       tag_name = params[:q][:tag]
       @products = @products.joins(:tags).where(tags: { name: tag_name })
     end
 
-    # トップページ用のOGP設定
     set_meta_tags(
       title: "抹茶スイーツレビュー",
       description: "抹茶スイーツの味わいを5つの項目で評価・レビューできるサイトです。濃さ、甘さ、苦味、後味、見た目を詳しくレビューして共有しましょう。",
@@ -38,70 +35,161 @@ class ProductsController < ApplicationController
   end
 
   def new
-    @product = Product.new
-    @product.build_review(user: current_user)
+    if session[:product_draft].present?
+      @product = restore_product_from_session
+    else
+      @product = Product.new
+      @product.build_review(user: current_user)
+    end
   end
 
-  # ステップ検証用のアクション
+  # ステップごとのバリデーション
   def validate_step
-    @product = Product.new(product_params)
-    @product.user = current_user
-
-    # レビューの設定
-    if @product.review.nil? && params[:product][:review_attributes].present?
-      @product.build_review(user: current_user)
-    elsif @product.review.present?
-      @product.review.user ||= current_user
-    end
-
     @current_step = params[:step].to_i
 
-    case @current_step
-    when 1
-      # ステップ1の検証
-      if validate_step_1
+    begin
+      session[:product_draft] ||= {}
+
+      if params[:product].blank?
+        render json: { success: false, errors: [ "パラメータが見つかりません" ] }
+        return
+      end
+
+      # 画像以外のパラメータをセッションに保存
+      product_data = product_params.except(:image)
+      session[:product_draft].merge!(product_data.to_h) if product_data.present?
+      session[:product_draft][:current_step] = @current_step
+
+      # 画像の処理（ステップ3）
+      if params[:product][:image].present?
+        uploaded_file = params[:product][:image]
+        temp_dir = Rails.root.join("tmp", "uploads", current_user.id.to_s)
+        FileUtils.mkdir_p(temp_dir)
+
+        temp_filename = "#{Time.current.to_i}_#{uploaded_file.original_filename}"
+        temp_path = temp_dir.join(temp_filename)
+
+        File.open(temp_path, "wb") { |file| file.write(uploaded_file.read) }
+
+        session[:product_draft]["temp_image_path"] = temp_path.to_s
+        session[:product_draft]["image_filename"] = uploaded_file.original_filename
+        session[:product_draft]["image_content_type"] = uploaded_file.content_type
+      end
+
+      # バリデーション実行
+      case @current_step
+      when 1
+        if validate_step_1
+          render json: { success: true }
+        else
+          render json: { success: false, errors: @errors }
+        end
+      when 2
+        if validate_step_1 && validate_step_2
+          render json: { success: true }
+        else
+          render json: { success: false, errors: @errors }
+        end
+      when 3
+        # ステップ3は画像とコメント（任意項目）
         render json: { success: true }
       else
-        render json: {
-          success: false,
-          errors: @product.errors.full_messages,
-          step: 1
-        }
+        render json: { success: false, errors: [ "無効なステップです" ] }
       end
-    when 2
-      # ステップ2の検証（ステップ1も含む）
-      if validate_step_1 && validate_step_2
-        render json: { success: true }
-      else
-        errors = []
-        errors += @product.errors.full_messages
-        errors += @product.review.errors.full_messages if @product.review&.errors&.any?
-        render json: {
-          success: false,
-          errors: errors.uniq,
-          step: 2
-        }
-      end
-    else
-      render json: { success: false, errors: [ "無効なステップです" ] }
+    rescue ActionController::ParameterMissing => e
+      Rails.logger.error "Parameter missing: #{e.message}"
+      render json: { success: false, errors: [ "必要なパラメータが不足しています" ] }
+    rescue => e
+      Rails.logger.error "Validate step error: #{e.class} - #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      render json: { success: false, errors: [ "エラーが発生しました" ] }
     end
+  end
+
+  # 確認画面の表示
+  def confirm
+    unless session[:product_draft].present?
+      redirect_to new_product_path, alert: "入力データがありません。最初から入力してください。"
+      return
+    end
+
+    @product = restore_product_from_session
+    @review = @product.review
+
+    @product.tag_names = session[:product_draft]["tag_names"].to_s
+
+    # 画像プレビュー用のBase64データを準備
+    if session[:product_draft]["temp_image_path"].present? && File.exist?(session[:product_draft]["temp_image_path"])
+      temp_path = session[:product_draft]["temp_image_path"]
+      @image_data_url = "data:#{session[:product_draft]['image_content_type'] || 'image/jpeg'};base64,#{Base64.strict_encode64(File.read(temp_path))}"
+    end
+
+    # 全ステップのバリデーション確認
+    unless @product.valid? && @review&.valid?
+      redirect_to new_product_path, alert: "入力内容に不備があります。"
+      nil
+    end
+  end
+
+  # 確認画面から編集画面に戻る
+  def back_to_edit
+    redirect_to new_product_path
   end
 
   def create
-    @product = current_user.products.build(product_params)
-
-    if @product.review.nil? && params[:product][:review_attributes].present?
-      @product.build_review(user: current_user)
-    elsif @product.review.present?
-      @product.review.user ||= current_user
+    unless session[:product_draft].present?
+      redirect_to new_product_path, alert: "入力データがありません。"
+      return
     end
 
-    if @product.save
-      save_tags
-      redirect_to products_path, notice: "商品が登録されました。"
-    else
-      flash.now[:alert] = "商品の登録に失敗しました。"
-      render :new, status: :unprocessable_entity
+    @product = current_user.products.build
+    restore_and_assign_data(@product)
+
+    ActiveRecord::Base.transaction do
+      if @product.save
+        save_tags
+        cleanup_temp_image
+        session.delete(:product_draft)
+        redirect_to complete_products_path, notice: "商品が登録されました。"
+      else
+        flash[:alert] = "商品の登録に失敗しました。"
+        redirect_to new_product_path
+      end
+    end
+  rescue => e
+    Rails.logger.error "Product creation failed: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    cleanup_temp_image
+    flash[:alert] = "商品の登録中にエラーが発生しました。"
+    redirect_to new_product_path
+  end
+
+  # 登録完了画面
+  def complete
+    @product = current_user.products.order(created_at: :desc).first
+    if @product.present?
+      @review = @product.review
+
+      og_image = generate_og_image
+
+      set_meta_tags(
+        title: "#{@product.name}を投稿しました！",
+        description: "#{@product.shop_name}の#{@product.name}のレビューを投稿しました。",
+        og: {
+          title: @product.name,
+          description: "#{@product.shop_name}の#{@product.name}をレビューしました！",
+          type: "article",
+          url: product_url(@product),
+          image: og_image,
+          site_name: "MatchaTasty"
+        }.compact,
+        twitter: {
+          card: "summary_large_image",
+          title: @product.name,
+          description: "#{@product.shop_name}の#{@product.name}をレビューしました！",
+          image: og_image
+        }.compact
+      )
     end
   end
 
@@ -109,7 +197,6 @@ class ProductsController < ApplicationController
     @review = @product.review
     @reviews = @product.review.present? ? [ @product.review ] : []
 
-    # 平均スコアの計算
     if @review.present?
       scores = [
         @review.richness,
@@ -123,15 +210,12 @@ class ProductsController < ApplicationController
       @chart_data = prepare_radar_chart_data
     end
 
-    # Xシェア用のデータを準備
     @share_url = product_url(@product)
     @share_text = helpers.twitter_share_text_for_product(@product, @review)
     @share_hashtags = helpers.build_share_hashtags(@product)
 
-    # OGP画像の準備
     og_image = generate_og_image
 
-    # OGPメタタグの設定
     set_meta_tags(
       title: @product.name,
       description: build_og_description,
@@ -167,62 +251,156 @@ class ProductsController < ApplicationController
 
   def destroy
     @product.destroy
-    # マイページの場合のみマイページにリダイレクト
     if params[:from] == "mypage"
       redirect_to reviews_mypage_path, notice: "投稿を削除しました。"
     else
-      # それ以外は商品一覧ページにリダイレクト
       redirect_to products_path, notice: "投稿を削除しました。"
     end
   end
 
   private
 
-  # ステップ1の検証
-  def validate_step_1
-    # 一時的なProductインスタンスで検証
-    temp_product = Product.new(
-      name: @product.name,
-      shop_name: @product.shop_name,
-      category: @product.category,
-      price: @product.price
+  # セッションからProductインスタンスを復元
+  def restore_product_from_session
+    draft = session[:product_draft]
+    product = Product.new(
+      name: draft["name"],
+      shop_name: draft["shop_name"],
+      category: draft["category"],
+      price: draft["price"]
     )
-    temp_product.user = current_user
+    product.user = current_user
+    # タグの復元
+    product.tag_names = draft["tag_names"] || ""
 
-    step1_attributes = [ :name, :shop_name, :category, :price ]
+    # 画像の復元
+    if draft["temp_image_path"].present? && File.exist?(draft["temp_image_path"])
+      begin
+        product.image.attach(
+          io: File.open(draft["temp_image_path"]),
+          filename: draft["image_filename"] || "uploaded_image.jpg",
+          content_type: draft["image_content_type"] || "image/jpeg"
+        )
+      rescue => e
+        Rails.logger.error "Image restoration error: #{e.message}"
+      end
+    end
+
+    # レビューの復元
+    if draft["review_attributes"].present?
+      review_attrs = draft["review_attributes"]
+      product.build_review(
+        richness: review_attrs["richness"],
+        sweetness: review_attrs["sweetness"],
+        bitterness: review_attrs["bitterness"],
+        aftertaste: review_attrs["aftertaste"],
+        appearance: review_attrs["appearance"],
+        comment: review_attrs["comment"],
+        user: current_user
+      )
+    else
+      product.build_review(user: current_user)
+    end
+
+    product
+  end
+
+  # セッションからデータを復元して既存のProductに割り当て
+  def restore_and_assign_data(product)
+    draft = session[:product_draft]
+
+    product.assign_attributes(
+      name: draft["name"],
+      shop_name: draft["shop_name"],
+      category: draft["category"],
+      price: draft["price"]
+    )
+
+    product.tag_names = draft["tag_names"] if draft["tag_names"].present?
+
+    # 画像の処理
+    if draft["temp_image_path"].present? && File.exist?(draft["temp_image_path"])
+      begin
+        product.image.attach(
+          io: File.open(draft["temp_image_path"]),
+          filename: draft["image_filename"] || "uploaded_image.jpg",
+          content_type: draft["image_content_type"] || "image/jpeg"
+        )
+      rescue => e
+        Rails.logger.error "Image attachment error: #{e.message}"
+      end
+    end
+
+    # レビューの復元
+    if draft["review_attributes"].present?
+      review_attrs = draft["review_attributes"]
+      if product.review.present?
+        product.review.assign_attributes(review_attrs.merge(user: current_user))
+      else
+        product.build_review(review_attrs.merge(user: current_user))
+      end
+    end
+  end
+
+  # ステップ1（商品基本情報）のバリデーション
+  def validate_step_1
+    draft = session[:product_draft]
+
+    temp_product = Product.new(
+      name: draft["name"],
+      shop_name: draft["shop_name"],
+      category: draft["category"],
+      price: draft["price"],
+      user: current_user
+    )
+
     temp_product.valid?
-
-    # ステップ1関連のエラーのみを抽出
+    step1_attributes = [ :name, :shop_name, :category, :price ]
     step1_errors = temp_product.errors.select { |error| step1_attributes.include?(error.attribute) }
 
     if step1_errors.any?
-      @product.errors.clear
-      step1_errors.each { |error| @product.errors.add(error.attribute, error.message) }
+      @errors = step1_errors.map(&:full_message)
       return false
     end
+
     true
   end
 
-  # ステップ2の検証
+  # ステップ2（レビュー評価）のバリデーション
   def validate_step_2
-    return false unless @product.review
+    draft = session[:product_draft]
 
-    # レビューの各項目を検証
+    unless draft["review_attributes"].present?
+      @errors = (@errors || []) + [ "レビュー情報が入力されていません" ]
+      return false
+    end
+
+    review_attrs = draft["review_attributes"]
+    temp_review = Review.new(
+      richness: review_attrs["richness"],
+      sweetness: review_attrs["sweetness"],
+      bitterness: review_attrs["bitterness"],
+      aftertaste: review_attrs["aftertaste"],
+      appearance: review_attrs["appearance"],
+      user: current_user
+    )
+
+    temp_review.valid?
     step2_attributes = [ :richness, :sweetness, :bitterness, :aftertaste, :appearance ]
-    @product.review.valid?
+    step2_errors = temp_review.errors.select { |error| step2_attributes.include?(error.attribute) }
 
-    step2_errors = @product.review.errors.select { |error| step2_attributes.include?(error.attribute) }
+    if step2_errors.any?
+      @errors = (@errors || []) + step2_errors.map(&:full_message)
+      return false
+    end
 
-    step2_errors.any? ? false : true
+    true
   end
 
-  # レーダーチャート用のデータを準備するメソッド
   def prepare_radar_chart_data
     return nil unless @review.present?
 
-    # Chart.js用のデータと、数値表示用のデータの両方を含む
     {
-      # Chart.js用のレーダーチャートデータ
       chart_config: {
         labels: [ "濃さ", "甘さ", "苦味", "後味", "見た目" ],
         datasets: [ {
@@ -243,7 +421,6 @@ class ProductsController < ApplicationController
           pointHoverBorderColor: "rgba(75, 192, 192, 1)"
         } ]
       },
-      # 数値表示用のデータ
       values: [
         { label: "濃さ", value: @review.richness || 0 },
         { label: "苦味", value: @review.bitterness || 0 },
@@ -254,13 +431,10 @@ class ProductsController < ApplicationController
     }
   end
 
-  # OGP用の画像URLを生成（公開URL版）
   def generate_og_image
     if @product.image.attached?
       begin
         if Rails.env.production?
-          # S3の公開URLを直接使用（署名なし）
-          # バケット名とキーから公開URLを構築
           key = @product.image.key
           "https://matchatasty.s3.ap-northeast-1.amazonaws.com/#{key}"
         else
@@ -268,53 +442,46 @@ class ProductsController < ApplicationController
         end
       rescue StandardError => e
         Rails.logger.warn "OGP画像の取得に失敗: #{e.message}"
-
-        if Rails.env.production?
-          "https://#{ENV["APP_HOST"] || "matchatasty.com"}/assets/og_default.png"
-        else
-          helpers.asset_url("og_default.png")
-        end
+        default_og_image_url
       end
     else
-      # デフォルト画像
-      if Rails.env.production?
-        "https://#{ENV["APP_HOST"] || "matchatasty.com"}/assets/og_default.png"
-      else
-        helpers.asset_url("og_default.png")
-      end
+      default_og_image_url
     end
   end
 
-  # OGP用のディスクリプション生成
+  def default_og_image_url
+    if Rails.env.production?
+      "https://#{ENV["APP_HOST"] || "matchatasty.com"}/assets/og_default.png"
+    else
+      helpers.asset_url("og_default.png")
+    end
+  end
+
   def build_og_description
     parts = []
-
-    # 店舗名
     parts << @product.shop_name if @product.shop_name.present?
-
-    # カテゴリ
     parts << @product.category_japanese if @product.respond_to?(:category_japanese)
 
-    # 評価
     if @review && @average_score
       parts << "総合評価 #{@average_score}/5.0"
     end
 
-    # 価格
     if @product.price.present?
       parts << "#{helpers.number_with_delimiter(@product.price)}円"
     end
 
-    # 結合（最大160文字程度に制限）
     description = parts.join(" | ")
     description.length > 160 ? description[0..157] + "..." : description
   end
 
   def product_params
     params.require(:product).permit(
-      :name, :category, :image, :shop_name, :price,
+      :name, :category, :image, :shop_name, :price, :tag_names,
       review_attributes: [ :id, :richness, :bitterness, :sweetness, :aftertaste, :appearance, :score, :comment, :taste_level ]
     )
+  rescue ActionController::ParameterMissing => e
+    Rails.logger.error "Parameter missing: #{e.message}"
+    {}
   end
 
   def set_product
@@ -326,9 +493,21 @@ class ProductsController < ApplicationController
   end
 
   def save_tags
-    if params[:product][:tag_names]
-      tag_names = params[:product][:tag_names].split(",").map(&:strip).uniq
-      @product.tags = tag_names.map { |name| Tag.find_or_initialize_by(name:) }
+    draft = session[:product_draft]
+    return unless draft && draft["tag_names"].present?
+
+    tag_names = draft["tag_names"].split(",").map(&:strip).reject(&:blank?).uniq
+    @product.tags = tag_names.map { |name| Tag.find_or_initialize_by(name: name) }
+  end
+
+  def cleanup_temp_image
+    return unless session[:product_draft]
+
+    temp_path = session[:product_draft]["temp_image_path"]
+    if temp_path.present? && File.exist?(temp_path)
+      File.delete(temp_path)
     end
+  rescue => e
+    Rails.logger.error "Failed to delete temp image: #{e.message}"
   end
 end

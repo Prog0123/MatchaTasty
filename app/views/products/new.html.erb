@@ -26,7 +26,8 @@
       <% end %>
     </div>
 
-    <%= form_with model: @product, local: true, class: "space-y-4" do |f| %>
+    <!-- 🔧 重要: data-controller属性を追加 -->
+    <%= form_with model: @product, local: true, class: "space-y-4", data: { controller: "product-form" } do |f| %>
       <!-- ステップ1: 商品情報 -->
       <div class="max-w-xl mx-auto card bg-white shadow-md p-6 rounded-xl">
         <div id="step-1" class="step-panel" data-step="1">
@@ -41,7 +42,7 @@
             <%= f.label :shop_name, class: "label" do %>
               <span class="label-text">店舗名<span class="text-red-500 ml-1">*</span></span>
             <% end %>
-            <%= f.text_field :shop_name, class: "input input-bordered w-full", placeholder: "例：パティスリー○○", required: true %>
+            <%= f.text_field :shop_name, class: "input input-bordered w-full", placeholder: "例:パティスリー○○", required: true %>
           </div>
 
           <div class="form-control">
@@ -61,7 +62,7 @@
 
           <div class="form-control">
             <%= f.label :price, class: "label" do %>
-              <span class="label-text">価格（円）<span class="text-red-500 ml-1">*</span></span>
+              <span class="label-text">価格(円)<span class="text-red-500 ml-1">*</span></span>
             <% end %>
             <div class="relative">
               <%= f.number_field :price, class: "input input-bordered w-full pr-12", placeholder: "500", min: 0, required: true %>
@@ -71,13 +72,16 @@
 
           <div class="form-control">
             <%= f.label :tag_names, class: "label" do %>
-              <span class="label-text">タグ（ , カンマ区切り）</span>
+              <span class="label-text">タグ(, カンマ区切り)</span>
             <% end %>
-            <%= f.text_field :tag_names, value: @product.tag_names, class: "input input-bordered w-full", placeholder: "例：チョコレート, 濃厚, おすすめ" %>
+            <%= f.text_field :tag_names, value: @product.tag_names, class: "input input-bordered w-full", placeholder: "例:チョコレート, 濃厚, おすすめ" %>
           </div>
 
           <div class="flex justify-end mt-4">
-            <button type="button" class="next-button btn btn-primary mt-4">次へ</button>
+            <button type="button" 
+                    class="next-button btn btn-primary mt-4" 
+                    data-action="click->product-form#nextStep" 
+                    data-step="1">次へ</button>
           </div>
         </div>
 
@@ -135,8 +139,13 @@
 
             <!-- ステップ2のナビゲーション -->
             <div class="flex justify-between mt-4">
-              <button type="button" class="prev-button btn btn-secondary">戻る</button>
-              <button type="button" class="next-button btn btn-primary">次へ</button>
+              <button type="button" 
+                      class="prev-button btn btn-secondary" 
+                      data-action="click->product-form#prevStep">戻る</button>
+              <button type="button" 
+                      class="next-button btn btn-primary" 
+                      data-action="click->product-form#nextStep" 
+                      data-step="2">次へ</button>
             </div>
           </div>
 
@@ -146,10 +155,14 @@
               <%= f.label :image, class: "label" do %>
                 <span class="label-text">画像</span>
               <% end %>
-              <%= f.file_field :image, class: "file-input file-input-bordered w-full", accept: "image/*" %>
+              <%= f.file_field :image, 
+                  class: "file-input file-input-bordered w-full", 
+                  accept: "image/*",
+                  data: { action: "change->product-form#showImagePreview" } %>
               <label class="label">
                 <span class="label-text-alt text-gray-500 image-upload-text">JPG、PNG、GIF形式の画像をアップロードしてください</span>
               </label>
+              <!-- プレビュー領域はJavaScriptで自動生成されます -->
             </div>
 
             <div class="form-control">
@@ -161,8 +174,12 @@
 
             <!-- ステップ3のナビゲーション -->
             <div class="flex justify-between mt-6">
-              <button type="button" class="prev-button btn btn-secondary">戻る</button>
-              <%= f.submit "商品を投稿する", class: "btn btn-primary" %>
+              <button type="button" 
+                      class="prev-button btn btn-secondary" 
+                      data-action="click->product-form#prevStep">戻る</button>
+              <button type="button" 
+                      class="btn btn-primary" 
+                      data-action="click->product-form#goToConfirm">確認画面へ →</button>
             </div>
           </div>
         <% end %>
@@ -174,7 +191,6 @@
 <style>
 /* スマホ対応のレスポンシブCSS */
 @media (max-width: 768px) {
-  /* 星評価のレイアウト調整 */
   .star-rating-container {
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -198,7 +214,6 @@
     flex-shrink: 0;
   }
 
-  /* 星と数値を中央揃えにする */
   .star-rating-container .star-section,
   .star-rating-container .display-section {
     width: 100%;
@@ -209,7 +224,6 @@
     justify-content: center;
   }
 
-  /* 画像アップロードテキストの調整 */
   .image-upload-text {
     font-size: 0.75rem;
     line-height: 1.2;

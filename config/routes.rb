@@ -20,7 +20,10 @@ Rails.application.routes.draw do
 
   resources :products do
     collection do
-      post :validate_step  # ステップ検証用のルート
+      post :validate_step    # ステップ検証用
+      get :confirm          # 確認画面
+      get :back_to_edit    # 確認画面から戻る
+      get :complete         # 完了画面
     end
   end
 

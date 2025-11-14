@@ -1,6 +1,5 @@
 // ステップフォーム
 document.addEventListener("turbo:load", () => {
-  // サーバーサイドからステップが指定されている場合はそれを使用
   let step = 1;
   const totalSteps = 3;
 
@@ -18,11 +17,8 @@ document.addEventListener("turbo:load", () => {
 
   // エラー表示をクリアする関数
   const clearErrors = () => {
-    // 既存のエラーメッセージを削除
     document.querySelectorAll('.error-message').forEach(el => el.remove());
     document.querySelectorAll('.error-container').forEach(el => el.remove());
-    
-    // input要素からエラークラスを削除
     document.querySelectorAll('.input-error').forEach(el => {
       el.classList.remove('input-error', 'border-red-500');
     });
@@ -32,7 +28,6 @@ document.addEventListener("turbo:load", () => {
   const showErrors = (errors, stepNum) => {
     clearErrors();
     
-    // ステップごとのエラー表示エリアを作成または取得
     let errorContainer = document.querySelector(`#step-${stepNum} .error-container`);
     if (!errorContainer) {
       errorContainer = document.createElement('div');
@@ -41,7 +36,6 @@ document.addEventListener("turbo:load", () => {
       stepElement.insertBefore(errorContainer, stepElement.firstChild);
     }
 
-    // エラーメッセージを表示
     const errorList = document.createElement('ul');
     errors.forEach(error => {
       const listItem = document.createElement('li');
@@ -55,7 +49,6 @@ document.addEventListener("turbo:load", () => {
 
     // 該当するinput要素にエラースタイルを適用
     errors.forEach(error => {
-      // エラーメッセージから対応するフィールドを特定してスタイル適用
       if (error.includes('商品名')) {
         const input = document.querySelector('input[name="product[name]"]');
         if (input) input.classList.add('input-error', 'border-red-500');
@@ -75,9 +68,8 @@ document.addEventListener("turbo:load", () => {
     });
   };
 
-  // ステップを検証する関数　次へボタン押下時に呼び出し
+  // ステップを検証する関数
   const validateStep = async (stepNum) => {
-
     try {
       const formData = getFormData();
       formData.append('step', stepNum);
@@ -107,21 +99,32 @@ document.addEventListener("turbo:load", () => {
     }
   };
 
+  // ステップサークルの状態を更新
   const updateStepStatus = () => {
     for (let i = 1; i <= totalSteps; i++) {
       const circle = document.getElementById(`step-circle-${i}`);
       if (circle) {
+        // 基本クラスをリセット
+        circle.className = 'w-8 h-8 rounded-full border-2 flex items-center justify-center mb-2 font-bold';
+        
         if (i < step) {
+          // 完了済み - 緑背景+白文字+チェックマーク
+          circle.classList.add("bg-primary", "text-white", "border-primary");
           circle.textContent = "✓";
-          circle.classList.add("bg-primary", "text-white");
-        } else {
+        } else if (i === step) {
+          // 現在のステップ - 白背景+緑枠線+数字
+          circle.classList.add("border-primary", "text-primary", "bg-white");
           circle.textContent = i;
-          circle.classList.remove("bg-primary", "text-white");
+        } else {
+          // 未到達 - グレー背景+数字
+          circle.classList.add("bg-gray-300", "text-gray-500", "border-gray-300");
+          circle.textContent = i;
         }
       }
     }
   };
 
+  // ステップ表示を更新
   const updateStep = () => {
     // 各ステップ表示切り替え
     document.querySelectorAll(".step-panel").forEach((el) => {
@@ -148,18 +151,79 @@ document.addEventListener("turbo:load", () => {
     updateStepStatus();
   };
 
+  // 画像プレビュー機能
+  const setupImagePreview = () => {
+    const imageInput = document.querySelector('input[type="file"][accept="image/*"]');
+    if (imageInput) {
+      imageInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            let preview = document.getElementById('image-preview');
+            if (!preview) {
+              preview = document.createElement('div');
+              preview.id = 'image-preview';
+              preview.className = 'mt-4';
+              event.target.parentElement.appendChild(preview);
+            }
+            preview.innerHTML = `
+              <img src="${e.target.result}" 
+                  class="max-w-full h-auto rounded-lg shadow-md" 
+                  style="max-height: 300px;">
+            `;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  };
+
+  // 確認画面への遷移
+  const setupConfirmButton = () => {
+    const confirmButton = document.querySelector('button[data-action*="goToConfirm"]');
+    if (confirmButton) {
+      confirmButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        
+        const formData = getFormData();
+        formData.append('step', 3);
+
+        try {
+          const response = await fetch('/products/validate_step', {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRF-Token': getCSRFToken()
+            }
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            window.location.href = '/products/confirm';
+          } else {
+            showErrors(result.errors || ['エラーが発生しました'], 3);
+          }
+        } catch (error) {
+          console.error('Error during goToConfirm:', error);
+          showErrors(['通信エラーが発生しました。もう一度お試しください。'], 3);
+        }
+      });
+    }
+  };
+
+  // ナビゲーションボタンのイベント設定
   const bindNavigationButtons = () => {
-    // 次へボタンすべてにイベント追加
+    // 次へボタン
     document.querySelectorAll(".next-button").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         e.preventDefault();
         
-        // ボタンを一時的に無効化
         btn.disabled = true;
         btn.textContent = '検証中...';
         
         try {
-          // 現在のステップを検証
           const isValid = await validateStep(step);
           
           if (isValid && step < totalSteps) {
@@ -167,21 +231,20 @@ document.addEventListener("turbo:load", () => {
             updateStep();
           }
         } finally {
-          // ボタンを再有効化
           btn.disabled = false;
           btn.textContent = '次へ';
         }
       });
     });
 
-    // 戻るボタンすべてにイベント追加
+    // 戻るボタン
     document.querySelectorAll(".prev-button").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         if (step > 1) {
           step--;
           updateStep();
-          clearErrors(); // 戻る時はエラーをクリア
+          clearErrors();
         }
       });
     });
@@ -190,4 +253,6 @@ document.addEventListener("turbo:load", () => {
   // 初期化
   updateStep();
   bindNavigationButtons();
+  setupImagePreview();
+  setupConfirmButton();
 });
