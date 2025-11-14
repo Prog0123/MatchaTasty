@@ -63,16 +63,47 @@ class ProductsController < ApplicationController
       # 画像の処理（ステップ3）
       if params[:product][:image].present?
         uploaded_file = params[:product][:image]
-        temp_dir = Rails.root.join("tmp", "uploads", current_user.id.to_s)
+        
+        # ファイルサイズの上限チェック(例:5MB)
+        max_size = 5.megabytes
+        if uploaded_file.size > max_size
+          render json: { success: false, errors: ["画像ファイルは5MB以下にしてください"] }
+          return
+        end
+
+        # Content-Typeの検証
+        allowed_types = %w[image/jpeg image/png image/gif image/webp]
+        unless allowed_types.include?(uploaded_file.content_type)
+          render json: { success: false, errors: ["許可されていない画像形式です"] }
+          return
+        end
+
+        # 拡張子を安全に決定（ユーザー入力を使わない）
+        extension = case uploaded_file.content_type
+                    when 'image/jpeg' then '.jpg'
+                    when 'image/png' then '.png'
+                    when 'image/gif' then '.gif'
+                    when 'image/webp' then '.webp'
+                    else '.jpg'
+                    end
+        
+        # ユーザーIDで一意なディレクトリを作成
+        user_id = current_user.id.to_i.to_s
+        temp_dir = Rails.root.join("tmp", "uploads", user_id)
         FileUtils.mkdir_p(temp_dir)
 
-        temp_filename = "#{Time.current.to_i}_#{uploaded_file.original_filename}"
+        # 完全にランダムなファイル名を生成（ユーザー入力を含まない）
+        temp_filename = "#{Time.current.to_i}_#{SecureRandom.hex(8)}#{extension}"
         temp_path = temp_dir.join(temp_filename)
 
+        # ファイルを書き込み
         File.open(temp_path, "wb") { |file| file.write(uploaded_file.read) }
 
+        # 元のファイル名は表示用にのみ保存
+        safe_filename = sanitize_filename(uploaded_file.original_filename)
+        
         session[:product_draft]["temp_image_path"] = temp_path.to_s
-        session[:product_draft]["image_filename"] = uploaded_file.original_filename
+        session[:product_draft]["image_filename"] = safe_filename
         session[:product_draft]["image_content_type"] = uploaded_file.content_type
       end
 
@@ -509,5 +540,20 @@ class ProductsController < ApplicationController
     end
   rescue => e
     Rails.logger.error "Failed to delete temp image: #{e.message}"
+  end
+  def sanitize_filename(filename)
+    return 'unnamed.jpg' if filename.blank?
+    
+    ext = File.extname(filename).downcase
+    ext = '.jpg' unless %w[.jpg .jpeg .png .gif .webp].include?(ext)
+    
+    base = File.basename(filename, '.*')
+            .gsub(/[^\w\s_-]+/, '')
+            .gsub(/\s+/, '_')
+            .slice(0, 100)
+    
+    base = 'image' if base.blank?
+    
+    "#{base}#{ext}"
   end
 end
