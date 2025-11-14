@@ -29,6 +29,27 @@
     <% end %>
   </div>
 
+  <!-- 検索結果の件数とリセット -->
+  <% if params[:q].present? || params[:q]&.dig(:tag).present? %>
+    <div class="flex items-center justify-between bg-base-200 p-3 rounded-lg">
+      <div class="flex items-center gap-4">
+        <span class="text-sm font-semibold">
+          検索結果: <span class="text-lg text-primary"><%= @products.total_count %></span>件
+        </span>
+        <% if params[:q]&.dig(:name_cont).present? %>
+          <span class="badge badge-outline">商品名: <%= params[:q][:name_cont] %></span>
+        <% end %>
+        <% if params[:q]&.dig(:category_eq).present? %>
+          <span class="badge badge-outline">カテゴリ: <%= Product::CATEGORY_TRANSLATIONS[Product.categories.key(params[:q][:category_eq].to_i)] %></span>
+        <% end %>
+        <% if params[:q]&.dig(:tag).present? %>
+          <span class="badge badge-outline">タグ: <%= params[:q][:tag] %></span>
+        <% end %>
+      </div>
+      <%= link_to "検索をリセット", products_path, class: "btn btn-sm btn-ghost" %>
+    </div>
+  <% end %>
+
   <!-- 商品が存在しない時 -->
   <% if @products.empty? %>
     <div class="alert alert-warning">商品が登録されていません。</div>
