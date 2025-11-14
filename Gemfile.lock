@@ -481,7 +481,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-s3
   bootsnap
-  brakeman (~> 7.1.1)
+  brakeman
   capybara
   cssbundling-rails
   debug
