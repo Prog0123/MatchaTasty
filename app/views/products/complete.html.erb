@@ -1,0 +1,224 @@
+<div class="min-h-screen flex items-center justify-center px-4 py-8">
+  <div class="max-w-md w-full">
+    <!-- 成功アニメーション -->
+    <div class="text-center mb-8">
+      <div class="inline-block">
+        <div class="success-checkmark">
+          <div class="check-icon">
+            <span class="icon-line line-tip"></span>
+            <span class="icon-line line-long"></span>
+            <div class="icon-circle"></div>
+            <div class="icon-fix"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- メッセージ -->
+    <div class="card bg-white shadow-xl p-8 text-center">
+      <h1 class="text-3xl font-bold text-gray-800 mb-4">🎉 投稿完了!</h1>
+      <p class="text-gray-600 mb-6">
+        あなたのレビューが正常に投稿されました。<br>
+        ご協力ありがとうございます!
+      </p>
+
+      <!-- 投稿した商品情報 -->
+      <% if @product.present? %>
+        <div class="bg-gray-50 p-4 rounded-lg mb-6">
+          <div class="flex items-center justify-center gap-3 mb-2">
+            <% if @product.image.attached? %>
+              <%= image_tag @product.image, class: "w-16 h-16 rounded-lg object-cover" %>
+            <% end %>
+            <div class="text-left">
+              <div class="font-bold text-gray-800"><%= @product.name %></div>
+              <div class="text-sm text-gray-600"><%= @product.shop_name %></div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- アクションボタン -->
+      <div class="space-y-3">
+        <%= link_to "投稿を見る", @product.present? ? product_path(@product) : products_path, class: "btn btn-primary btn-block" %>
+        <%= link_to "一覧に戻る", products_path, class: "btn btn-outline btn-block" %>
+        <%= link_to "もう1つ投稿する", new_product_path, class: "btn btn-ghost btn-block" %>
+      </div>
+    </div>
+
+    <!-- SNSシェアセクション -->
+    <div class="mt-6 text-center">
+      <p class="text-sm text-gray-600 mb-3">レビューをシェアしませんか?</p>
+      <div class="flex justify-center gap-3">
+        <% if @product.present? %>
+          <%= link_to "https://twitter.com/intent/tweet?text=#{CGI.escape("#{@product.name}をレビューしました!")}&url=#{CGI.escape(product_url(@product))}&hashtags=MatchaTasty", 
+                      target: "_blank", 
+                      rel: "noopener noreferrer",
+                      class: "btn btn-sm btn-circle btn-outline hover:bg-black hover:text-white hover:border-black transition-colors" do %>
+            <!-- Xアイコン -->
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* チェックマークアニメーション */
+.success-checkmark {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+.success-checkmark .check-icon {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  border-radius: 50%;
+  box-sizing: content-box;
+  border: 4px solid #4ade80;
+}
+
+.success-checkmark .check-icon::before {
+  top: 3px;
+  left: -2px;
+  width: 30px;
+  transform-origin: 100% 50%;
+  border-radius: 100px 0 0 100px;
+}
+
+.success-checkmark .check-icon::after {
+  top: 0;
+  left: 30px;
+  width: 60px;
+  transform-origin: 0 50%;
+  border-radius: 0 100px 100px 0;
+  animation: rotate-circle 4.25s ease-in;
+}
+
+.success-checkmark .check-icon::before,
+.success-checkmark .check-icon::after {
+  content: '';
+  height: 100px;
+  position: absolute;
+  background: 0 auto;
+  transform: rotate(-45deg);
+}
+
+.success-checkmark .icon-line {
+  height: 5px;
+  background-color: #4ade80;
+  display: block;
+  border-radius: 2px;
+  position: absolute;
+  z-index: 10;
+}
+
+.success-checkmark .icon-line.line-tip {
+  top: 46px;
+  left: 14px;
+  width: 25px;
+  transform: rotate(45deg);
+  animation: icon-line-tip 0.75s;
+}
+
+.success-checkmark .icon-line.line-long {
+  top: 38px;
+  right: 8px;
+  width: 47px;
+  transform: rotate(-45deg);
+  animation: icon-line-long 0.75s;
+}
+
+.success-checkmark .icon-circle {
+  top: -4px;
+  left: -4px;
+  z-index: 10;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: absolute;
+  box-sizing: content-box;
+  border: 4px solid rgba(74, 222, 128, 0.5);
+}
+
+.success-checkmark .icon-fix {
+  top: 8px;
+  width: 5px;
+  left: 26px;
+  z-index: 1;
+  height: 85px;
+  position: absolute;
+  transform: rotate(-45deg);
+  background-color: 0 auto;
+}
+
+@keyframes rotate-circle {
+  0% {
+    transform: rotate(-45deg);
+  }
+  5% {
+    transform: rotate(-45deg);
+  }
+  12% {
+    transform: rotate(-405deg);
+  }
+  100% {
+    transform: rotate(-405deg);
+  }
+}
+
+@keyframes icon-line-tip {
+  0% {
+    width: 0;
+    left: 1px;
+    top: 19px;
+  }
+  54% {
+    width: 0;
+    left: 1px;
+    top: 19px;
+  }
+  70% {
+    width: 50px;
+    left: -8px;
+    top: 37px;
+  }
+  84% {
+    width: 17px;
+    left: 21px;
+    top: 48px;
+  }
+  100% {
+    width: 25px;
+    left: 14px;
+    top: 46px;
+  }
+}
+
+@keyframes icon-line-long {
+  0% {
+    width: 0;
+    right: 46px;
+    top: 54px;
+  }
+  65% {
+    width: 0;
+    right: 46px;
+    top: 54px;
+  }
+  84% {
+    width: 55px;
+    right: 0px;
+    top: 35px;
+  }
+  100% {
+    width: 47px;
+    right: 8px;
+    top: 38px;
+  }
+}
+</style>

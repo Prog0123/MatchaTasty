@@ -14,3 +14,7 @@ application.register("review-radar", ReviewRadarController)
 // Xシェアコントローラーを追加
 import TwitterShareController from "./twitter_share_controller"
 application.register("twitter-share", TwitterShareController)
+
+// 星評価コントローラーを追加
+import StarsController from "./stars_controller"
+application.register("stars", StarsController)

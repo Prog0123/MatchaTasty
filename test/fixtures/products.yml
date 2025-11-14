@@ -2,9 +2,9 @@
 
 one:
   user: one
-  name: MyString
+  name: 抹茶ラテ
   category: latte
-  store_name: MyString
+  shop_name: カフェ抹茶
   description: MyText
   richness: 1.5
   sweetness: 1.5
@@ -15,9 +15,9 @@ one:
 
 two:
   user: two
-  name: MyString
+  name: 抹茶ケーキ
   category: cake
-  store_name: MyString
+  shop_name: 抹茶堂
   description: MyText
   richness: 1.5
   sweetness: 1.5
