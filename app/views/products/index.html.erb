@@ -9,10 +9,24 @@
   <!-- 検索フォーム -->
   <div class="card bg-base-100 p-4 shadow">
     <%= search_form_for @q, url: products_path, method: :get, class: "flex flex-col md:flex-row gap-4" do |f| %>
-      <div class="flex-2">
+      <div class="flex-2 relative" 
+          data-controller="autocomplete" 
+          data-autocomplete-url-value="<%= autocomplete_products_path %>">
         <%= f.label :name_cont, "商品名", class: "label-text" %>
-        <%= f.search_field :name_cont, class: "input input-bordered w-full" %>
+        <%= f.search_field :name_cont, 
+            class: "input input-bordered w-full",
+            data: { 
+              autocomplete_target: "input",
+              action: "input->autocomplete#search keydown->autocomplete#handleKeydown blur->autocomplete#blur"
+            },
+            autocomplete: "off" %>
+        
+        <!-- オートコンプリート結果表示エリア -->
+        <div data-autocomplete-target="results" 
+            class="hidden absolute z-10 w-full bg-base-100 shadow-lg rounded-box mt-1 max-h-60 overflow-y-auto border border-base-300">
+        </div>
       </div>
+      
       <div class="flex-1">
         <%= f.label :category_eq, "カテゴリ", class: "label-text" %>
         <%= f.select :category_eq,
