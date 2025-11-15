@@ -289,6 +289,28 @@ class ProductsController < ApplicationController
     end
   end
 
+  # オートコンプリート用API
+  def autocomplete
+    query = params[:query].to_s.strip
+
+    if query.blank?
+      render json: []
+      return
+    end
+
+    # ActiveRecord::Sanitization を使用
+    sanitized_query = ActiveRecord::Base.sanitize_sql_like(query)
+
+    products = Product
+                .where("name ILIKE ?", "%#{sanitized_query}%")
+                .select(:name)
+                .distinct
+                .limit(10)
+                .pluck(:name)
+
+    render json: products
+  end
+
   private
 
   # セッションからProductインスタンスを復元

@@ -4,17 +4,17 @@
 
 import { application } from "./application"
 
+import AutocompleteController from "./autocomplete_controller"
+application.register("autocomplete", AutocompleteController)
+
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
-// Importing the ReviewRadarController
 import ReviewRadarController from "./review_radar_controller"
 application.register("review-radar", ReviewRadarController)
 
-// Xシェアコントローラーを追加
-import TwitterShareController from "./twitter_share_controller"
-application.register("twitter-share", TwitterShareController)
-
-// 星評価コントローラーを追加
 import StarsController from "./stars_controller"
 application.register("stars", StarsController)
+
+import TwitterShareController from "./twitter_share_controller"
+application.register("twitter-share", TwitterShareController)

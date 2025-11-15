@@ -24,6 +24,7 @@ Rails.application.routes.draw do
       get :confirm          # 確認画面
       get :back_to_edit    # 確認画面から戻る
       get :complete         # 完了画面
+      get :autocomplete   # オートコンプリート用
     end
   end
 
