@@ -15,13 +15,20 @@
     <%= display_meta_tags site: 'MatchaTasty',
                           reverse: true,
                           separator: '|',
-                          description: '抹茶スイーツのレビューサイト',
+                          description: '抹茶スイーツのレビューサイト。濃さ・甘さ・苦味を5段階評価で可視化。あなた好みの抹茶スイーツを見つけよう。',
                           og: {
                             site_name: 'MatchaTasty',
-                            type: 'website'
+                            title: 'MatchaTasty - 抹茶スイーツレビューサイト',
+                            description: '抹茶スイーツに特化したレビュー・発見サービス。濃さ・甘さ・苦味を可視化して、あなた好みの抹茶スイーツを見つけよう。',
+                            type: 'website',
+                            url: 'https://matchatasty.com',
+                            image: 'https://matchatasty.com/og_default.png'
                           },
                           twitter: {
-                            card: 'summary_large_image'
+                            card: 'summary_large_image',
+                            title: 'MatchaTasty - 抹茶スイーツレビューサイト',
+                            description: '抹茶スイーツに特化したレビュー・発見サービス',
+                            image: 'https://matchatasty.com/og_default.png'
                           } %>
     
     <%= csrf_meta_tags %>
@@ -33,9 +40,9 @@
     <%= yield :head %>
 
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/icon2.png">
+    <link rel="apple-touch-icon" href="/icon2.png">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
