@@ -83,4 +83,8 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
   config.assets.digest = true
   config.assets.debug = true
+  # 開発環境では確認メール不要にする
+  config.to_prepare do
+    Devise::SessionsController.skip_before_action :require_no_authentication, only: [ :create ]
+  end
 end

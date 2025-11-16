@@ -8,6 +8,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     
+
+    <meta name="google-maps-api-key" content="<%= Rails.application.credentials.dig(:google_maps, :api_key) %>">
+
     <!-- OGPメタタグ（display_meta_tagsが動的に生成） -->
     <%= display_meta_tags site: 'MatchaTasty',
                           reverse: true,

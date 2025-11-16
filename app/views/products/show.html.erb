@@ -104,10 +104,35 @@
               <% end %>
             </div>
           </div>
-        </div>
+
+          <!-- Google Map表示 -->
+          <% if @product.has_location? %>
+            <div class="bg-gray-50 p-3 rounded max-w-sm mt-6">
+              <% if @product.address.present? %>
+                <p class="text-sm text-gray-600 mb-3">
+                  <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <%= @product.address %>
+                </p>
+              <% end %>
+              <div 
+                data-controller="google-map"
+                data-google-map-latitude-value="<%= @product.latitude %>"
+                data-google-map-longitude-value="<%= @product.longitude %>"
+                data-google-map-shop-name-value="<%= @product.shop_name %>"
+                class="w-full rounded shadow-sm bg-gray-100"
+                style="height: 200px;">
+                <p class="text-center pt-20 text-gray-500 text-sm">地図を読み込み中...</p>
+              </div>
+            </div>
+          <% end %>
+          </div>
 
         <!-- 右側：レーダーチャートとレビュー -->
-        <div class="w-full md:w-1/2 space-y-6">
+        <div class="w-full md:w-1/2 flex flex-col justify-between min-h-full">
+          <div class="space-y-6">
           <!-- レーダーチャート -->
           <div class="flex justify-center">
             <div class="chart-container" style="height: 300px; width: 300px;">
@@ -141,46 +166,43 @@
             </div>
           <% end %>
 
-            <!-- Xシェアボタン・投稿日・いいねボタン（横並び表示） -->
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <!-- Xシェアボタン -->
-              <% if @review.present? %>
-                <div class="sm:ml-auto">
-                  <% 
-                    share_url_encoded = CGI.escape(@share_url || '')
-                    share_text_encoded = CGI.escape(@share_text || '')
-                    share_hashtags_encoded = (@share_hashtags || []).join(',')
-                    twitter_url = "https://twitter.com/intent/tweet?text=#{share_text_encoded}&url=#{share_url_encoded}&hashtags=#{share_hashtags_encoded}"
-                  %>
-                  
-                  <%= link_to twitter_url, 
-                              target: '_blank', 
-                              rel: 'noopener noreferrer',
-                              class: "inline-flex items-center px-4 py-2 bg-black hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md",
-                              style: "background-color: #000000; color: #ffffff; text-decoration: none;" do %>
-                    <svg class="w-4 h-4 mr-2" style="width: 16px; height: 16px; margin-right: 8px;" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
-                    Xでシェア
-                  <% end %>
-                </div>
-              <% else %>
-                <div class="sm:ml-auto">
-                  <button class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" 
-                          style="background-color: #d1d5db; color: #6b7280;" 
-                          disabled>
-                    <svg class="w-4 h-4 mr-2" style="width: 16px; height: 16px; margin-right: 8px;" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
-                    Xでシェア（レビュー未登録）
-                  </button>
-                </div>
-              <% end %>
+            <!-- Xシェアボタン・いいねボタン -->
+            <% if @review.present? %>
+              <div class="absolute bottom-5 right-0 flex items-center gap-3">
+                <!-- Xシェアボタン -->
+                <% 
+                  share_url_encoded = CGI.escape(@share_url || '')
+                  share_text_encoded = CGI.escape(@share_text || '')
+                  share_hashtags_encoded = (@share_hashtags || []).join(',')
+                  twitter_url = "https://twitter.com/intent/tweet?text=#{share_text_encoded}&url=#{share_url_encoded}&hashtags=#{share_hashtags_encoded}"
+                %>
+                
+                <%= link_to twitter_url, 
+                            target: '_blank', 
+                            rel: 'noopener noreferrer',
+                            class: "inline-flex items-center px-4 py-2 bg-black hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md",
+                            style: "background-color: #000000; color: #ffffff; text-decoration: none;" do %>
+                  <svg class="w-4 h-4 mr-2" style="width: 16px; height: 16px; margin-right: 8px;" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                  Xでシェア
+                <% end %>
 
-              <!-- いいねボタン（詳細ページ用） -->
-              <% if @review.present? %>
+                <!-- いいねボタン -->
                 <%= render "likes/like_button", review: @review, size: "md" %>
-              <% end %>
+              </div>
+            <% else %>
+              <div class="absolute bottom-5 right-0">
+                <button class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" 
+                        style="background-color: #d1d5db; color: #6b7280;" 
+                        disabled>
+                  <svg class="w-4 h-4 mr-2" style="width: 16px; height: 16px; margin-right: 8px;" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                  Xでシェア（レビュー未登録）
+                </button>
+              </div>
+            <% end %>
             </div>
 
           </div>

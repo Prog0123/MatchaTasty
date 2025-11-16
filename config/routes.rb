@@ -5,7 +5,8 @@ Rails.application.routes.draw do
   get "likes/destroy"
   devise_for :users, controllers: {
     passwords: "users/passwords",
-    omniauth_callbacks: "users/omniauth_callbacks"
+    omniauth_callbacks: "users/omniauth_callbacks",
+    confirmations: "users/confirmations"
   }
 
   get "homes/top"

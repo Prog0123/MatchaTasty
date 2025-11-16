@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
 
   # Deviseのエラーメッセージを日本語化
   def after_sign_in_path_for(resource)
-    stored_location_for(resource) || root_path
+    stored_location_for(resource) || products_path
   end
 
   def after_sign_out_path_for(resource_or_scope)
