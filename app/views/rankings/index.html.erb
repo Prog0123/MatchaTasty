@@ -82,7 +82,7 @@
                   </div>
 
                   <!-- 商品詳細情報 -->
-                  <div class="flex-1 min-w-0">
+                  <div class="flex-1 min-w-0 max-w-md">
                     <h2 class="text-2xl font-bold mb-2 line-clamp-1">
                       <%= link_to product.name, product_path(product), class: "link link-hover text-gray-800 hover:text-blue-600 transition-colors" %>
                     </h2>
@@ -122,7 +122,7 @@
                   </div>
 
                   <!-- マップエリア -->
-                  <div class="flex-shrink-0 w-48">
+                  <div class="flex-shrink-0 w-80">
                     <% if product.has_location? %>
                       <div 
                         data-controller="google-map"
@@ -227,9 +227,9 @@
 
                 <!-- 画像と地図を横並び -->
                 <div class="flex gap-1.5">
-                  <!-- 商品画像 (60%) -->
+                  <!-- 商品画像 -->
                   <%= link_to product_path(product), class: "block flex-1" do %>
-                    <div class="w-full h-44 overflow-hidden rounded-lg bg-gray-50 shadow-sm">
+                    <div class="w-full h-80 overflow-hidden rounded-lg bg-gray-50 shadow-sm">
                       <% if product.image.attached? %>
                         <%= image_tag product.image, class: "w-full h-full object-cover" %>
                       <% else %>
@@ -242,7 +242,7 @@
                     </div>
                   <% end %>
 
-                  <!-- 地図 (40%) -->
+                  <!-- 地図 -->
                   <% if product.has_location? %>
                     <div class="w-2/5 overflow-hidden rounded-lg">
                       <div 
@@ -250,7 +250,7 @@
                         data-google-map-latitude-value="<%= product.latitude %>"
                         data-google-map-longitude-value="<%= product.longitude %>"
                         data-google-map-shop-name-value="<%= product.shop_name %>"
-                        class="w-full h-44 bg-gray-100"
+                        class="w-full h-80 bg-gray-100"
                         style="max-width: 100%;">
                         <p class="text-center pt-16 text-gray-400 text-xs">地図を読み込み中...</p>
                       </div>

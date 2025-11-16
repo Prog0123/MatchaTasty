@@ -101,51 +101,65 @@
           <!-- ステップ2: 味覚評価 -->
           <div id="step-2" class="step-panel hidden" data-step="2">
             <div class="divider">レビュー情報</div>
-            <p class="text-sm text-gray-600 mb-4 text-center">各項目を5段階で評価してください</p>
+            <p class="text-sm text-gray-600 mb-2 text-center">各項目を5段階で評価してください</p>
+            
+            <!-- 評価基準の説明カード -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
+              <p class="text-sm text-blue-800">
+                <strong>📌 評価のヒント：</strong>基準がわからない場合は「3」を中央として、それより強いか弱いかで判断してください
+              </p>
+            </div>
 
             <% [
-              ["濃さ", :richness, "★", true],
-              ["甘さ", :sweetness, "★", true],
-              ["苦味", :bitterness, "★", true],
-              ["後味", :aftertaste, "★", true],
-              ["見た目", :appearance, "★", true]
-            ].each do |label, name, symbol| %>
-              <div class="form-control mb-4"
-                   data-controller="stars"
-                   data-stars-name="product[review_attributes][<%= name %>]"
-                   data-stars-symbol-value="<%= symbol %>">
+              ["濃さ", :richness, "★", "1=薄い → 3=ちょうど良い → 5=濃厚"],
+              ["甘さ", :sweetness, "★", "1=控えめ → 3=普通 → 5=とても甘い"],
+              ["苦味", :bitterness, "★", "1=苦くない → 3=ほろ苦い → 5=苦い"],
+              ["後味", :aftertaste, "★", "1=さっぱり → 3=ほどよい → 5=濃厚な余韻"],
+              ["見た目", :appearance, "★", "1=普通 → 3=良い → 5=美しい"]
+            ].each do |label, name, symbol, hint| %>
+              <div class="form-control mb-6"
+                  data-controller="stars"
+                  data-stars-name="product[review_attributes][<%= name %>]"
+                  data-stars-symbol-value="<%= symbol %>">
 
-              <!-- 各要素を個別に調整可能なコンテナ -->
-              <div class="flex items-center w-full relative star-rating-container">
-                <!-- ラベル部分 -->
-                <div class="ml-10 w-20 flex-shrink-0 label-section">
-                  <label class="label">
-                    <span class="label-text font-medium"><%= label %><span class="text-red-500 ml-1">*</span></span>
-                  </label>
-                </div>
+                <!-- 各要素を個別に調整可能なコンテナ -->
+                <div class="flex items-center w-full relative star-rating-container">
+                  <!-- ラベル部分 -->
+                  <div class="ml-10 w-20 flex-shrink-0 label-section">
+                    <label class="label">
+                      <span class="label-text font-medium"><%= label %><span class="text-red-500 ml-1">*</span></span>
+                    </label>
+                  </div>
 
-                <!-- 星評価部分 -->
-                <div class="ml-19 flex space-x-1 star-section">
-                  <% 5.times do |i| %>
-                    <i class="star cursor-pointer text-2xl text-gray-400 hover:text-yellow-400 transition-colors"
-                       data-action="click->stars#select"
-                       data-value="<%= i + 1 %>"><%= symbol %></i>
-                  <% end %>
-                </div>
+                  <!-- 星評価部分 -->
+                  <div class="ml-19 flex space-x-1 star-section">
+                    <% 5.times do |i| %>
+                      <i class="star cursor-pointer text-2xl text-gray-400 hover:text-yellow-400 transition-colors"
+                        data-action="click->stars#select"
+                        data-value="<%= i + 1 %>"><%= symbol %></i>
+                    <% end %>
+                  </div>
 
-                <!-- 数値表示部分 -->
-                <div class="ml-20 flex items-center bg-gray-100 px-3 py-1 rounded-lg display-section">
-                  <span class="text-xl font-bold text-gray-700 min-w-[2rem]" data-stars-target="display">
-                    <%= @product.review&.send(name) || 0 %>
-                  </span>
-                  <span class="text-sm text-gray-500 ml-1">/ 5</span>
+                  <!-- 数値表示部分 -->
+                  <div class="ml-20 flex items-center bg-gray-100 px-3 py-1 rounded-lg display-section">
+                    <span class="text-xl font-bold text-gray-700 min-w-[2rem]" data-stars-target="display">
+                      <%= @product.review&.send(name) || 0 %>
+                    </span>
+                    <span class="text-sm text-gray-500 ml-1">/ 5</span>
+                  </div>
                 </div>
+                
+                <!-- 評価基準のヒント -->
+                <div class="mt-2 text-center">
+                  <p class="text-xs text-gray-500 italic">
+                    💡 <%= hint %>
+                  </p>
+                </div>
+                
+                <%= rf.hidden_field name, 
+                    value: @product.review&.send(name) || 0,
+                    data: { stars_target: "input" } %>
               </div>
-              
-              <%= rf.hidden_field name, 
-                  value: @product.review&.send(name) || 0,
-                  data: { stars_target: "input" } %>
-            </div>
             <% end %>
 
             <!-- ステップ2のナビゲーション -->
