@@ -15,9 +15,15 @@
         <% if user_signed_in? %>
           <div class="relative group">
             <button class="w-9 h-9 bg-emerald-500 rounded-full flex items-center justify-center hover:bg-emerald-400 transition-colors">
-              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-              </svg>
+              <% if current_user.avatar.attached? %>
+                <%= image_tag current_user.avatar, class: "w-full h-full object-cover rounded-full" %>
+              <% elsif current_user.image_url.present? %>
+                <%= image_tag current_user.image_url, class: "w-full h-full object-cover rounded-full" %>
+              <% else %>
+                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                </svg>
+              <% end %>
             </button>
 
             <!-- デスクトップドロップダウン -->

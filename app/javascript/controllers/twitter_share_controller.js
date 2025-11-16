@@ -10,13 +10,6 @@ export default class extends Controller {
   share(event) {
     event.preventDefault()
     
-    // デバッグ用ログ
-    console.log('Twitter Share:', {
-      url: this.urlValue,
-      text: this.textValue,
-      hashtags: this.hashtagsValue
-    })
-    
     const params = new URLSearchParams({
       text: this.textValue,
       url: this.urlValue,

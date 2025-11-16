@@ -45,6 +45,17 @@
             <%= f.text_field :shop_name, class: "input input-bordered w-full", placeholder: "例:パティスリー○○", required: true %>
           </div>
 
+          <!-- 住所入力フィールド -->
+          <div class="form-control">
+            <%= f.label :address, class: "label" do %>
+              <span class="label-text">店舗住所</span>
+            <% end %>
+            <%= f.text_field :address, class: "input input-bordered w-full", placeholder: "例：東京都渋谷区〇〇1-2-3" %>
+            <label class="label">
+              <span class="label-text-alt text-gray-500">住所を入力すると地図に表示されます</span>
+            </label>
+          </div>
+
           <div class="form-control">
             <%= f.label :category, class: "label" do %>
               <span class="label-text">カテゴリ<span class="text-red-500 ml-1">*</span></span>

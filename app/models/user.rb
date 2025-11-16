@@ -46,7 +46,8 @@ class User < ApplicationRecord
         email: email,
         name: auth.info.name || email.split("@").first,
         image_url: auth.info.image,
-        password: Devise.friendly_token[0, 20]
+        password: Devise.friendly_token[0, 20],
+        confirmed_at: Time.current
       )
       user.save
     end

@@ -122,15 +122,27 @@
 
                   <!-- マップエリア -->
                   <div class="flex-shrink-0 w-48">
-                    <div class="w-full h-32 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
-                      <div class="text-center">
-                        <svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        <span class="text-xs text-gray-400 font-medium">Google Map<br>Coming Soon</span>
+                    <% if product.has_location? %>
+                      <div 
+                        data-controller="google-map"
+                        data-google-map-latitude-value="<%= product.latitude %>"
+                        data-google-map-longitude-value="<%= product.longitude %>"
+                        data-google-map-shop-name-value="<%= product.shop_name %>"
+                        class="w-full h-32 rounded-xl bg-gray-100"
+                        style="height: 128px;">
+                        <p class="text-center pt-12 text-gray-400 text-xs">地図を読み込み中...</p>
                       </div>
-                    </div>
+                    <% else %>
+                      <div class="w-full h-32 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
+                        <div class="text-center">
+                          <svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          </svg>
+                          <span class="text-xs text-gray-400 font-medium">位置情報なし</span>
+                        </div>
+                      </div>
+                    <% end %>
                   </div>
 
                   <!-- スコア表示エリア -->

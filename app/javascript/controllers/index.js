@@ -18,3 +18,6 @@ application.register("stars", StarsController)
 
 import TwitterShareController from "./twitter_share_controller"
 application.register("twitter-share", TwitterShareController)
+
+import GoogleMapController from "./google_map_controller"
+application.register("google-map", GoogleMapController)

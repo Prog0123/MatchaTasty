@@ -17,6 +17,10 @@ class Product < ApplicationRecord
   # バリデーション用のステップ管理
   attr_accessor :current_step
 
+  # Geocoder設定
+  geocoded_by :address
+  after_validation :geocode, if: ->(obj) { obj.address.present? && obj.address_changed? }
+
   # タグ付け
   enum :category, {
     cake: 0,
@@ -61,6 +65,11 @@ class Product < ApplicationRecord
   def average_score
     return 0.0 if review.nil?
     review.score || 0.0
+  end
+
+  # 地図表示用のメソッド
+  def has_location?
+    latitude.present? && longitude.present?
   end
 
   private

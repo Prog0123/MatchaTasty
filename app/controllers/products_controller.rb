@@ -320,7 +320,8 @@ class ProductsController < ApplicationController
       name: draft["name"],
       shop_name: draft["shop_name"],
       category: draft["category"],
-      price: draft["price"]
+      price: draft["price"],
+      address: draft["address"]
     )
     product.user = current_user
     # タグの復元
@@ -366,7 +367,8 @@ class ProductsController < ApplicationController
       name: draft["name"],
       shop_name: draft["shop_name"],
       category: draft["category"],
-      price: draft["price"]
+      price: draft["price"],
+      address: draft["address"]
     )
 
     product.tag_names = draft["tag_names"] if draft["tag_names"].present?
@@ -404,11 +406,12 @@ class ProductsController < ApplicationController
       shop_name: draft["shop_name"],
       category: draft["category"],
       price: draft["price"],
+      address: draft["address"],
       user: current_user
     )
 
     temp_product.valid?
-    step1_attributes = [ :name, :shop_name, :category, :price ]
+    step1_attributes = [ :name, :shop_name, :category, :price, :address ]
     step1_errors = temp_product.errors.select { |error| step1_attributes.include?(error.attribute) }
 
     if step1_errors.any?
@@ -504,9 +507,9 @@ class ProductsController < ApplicationController
 
   def default_og_image_url
     if Rails.env.production?
-      "https://#{ENV["APP_HOST"] || "matchatasty.com"}/assets/og_default.png"
+      "https://#{ENV["APP_HOST"] || "matchatasty.com"}/og_default.png"
     else
-      helpers.asset_url("og_default.png")
+      "#{request.base_url}/og_default.png"
     end
   end
 
@@ -530,6 +533,7 @@ class ProductsController < ApplicationController
   def product_params
     params.require(:product).permit(
       :name, :category, :image, :shop_name, :price, :tag_names,
+      :address,
       review_attributes: [ :id, :richness, :bitterness, :sweetness, :aftertaste, :appearance, :score, :comment, :taste_level ]
     )
   rescue ActionController::ParameterMissing => e
