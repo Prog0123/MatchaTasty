@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "pages/terms"
+  get "pages/privacy"
   get "guides/index"
   get "comments/create"
   get "comments/destroy"
@@ -13,7 +15,10 @@ Rails.application.routes.draw do
   get "homes/top"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
+  # 静的ページ
   get "guides", to: "guides#index", as: "guides"
+  get "terms", to: "pages#terms", as: "terms"
+  get "privacy", to: "pages#privacy", as: "privacy"
 
   # Topページ
   root "homes#top"
