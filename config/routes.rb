@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "guides/index"
   get "comments/create"
   get "comments/destroy"
   get "likes/create"
@@ -11,6 +12,8 @@ Rails.application.routes.draw do
 
   get "homes/top"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  get "guides", to: "guides#index", as: "guides"
 
   # Topページ
   root "homes#top"

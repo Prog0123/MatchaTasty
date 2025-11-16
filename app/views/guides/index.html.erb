@@ -1,0 +1,425 @@
+<div class="min-h-screen bg-emerald-50">
+  <!-- ヘッダー -->
+  <div class="bg-emerald-600 text-white py-16">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">MatchaTastyの使い方</h1>
+      <p class="text-xl text-emerald-100">抹茶スイーツの楽しみ方をマスターしよう</p>
+    </div>
+  </div>
+
+  <!-- メインコンテンツ -->
+  <div class="max-w-4xl mx-auto px-6 py-12">
+    
+    <!-- はじめに -->
+    <section class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+      <h2 class="text-2xl font-bold text-emerald-700 mb-4 flex items-center">
+        <span class="text-3xl mr-3">🍵</span>
+        MatchaTastyとは？
+      </h2>
+      <p class="text-gray-700 leading-relaxed mb-4">
+        MatchaTastyは、抹茶スイーツ愛好家のためのレビュー・発見プラットフォームです。
+        <strong>濃さ・苦味・甘さ・後味・見た目</strong>の5つの評価軸で、あなたの好みにぴったりの抹茶スイーツを見つけることができます。
+      </p>
+      <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded">
+        <p class="text-emerald-800 font-semibold">
+          💡 無料で利用できます。今すぐ登録して抹茶コミュニティに参加しましょう!
+        </p>
+      </div>
+    </section>
+
+    <!-- ステップ1: アカウント登録 -->
+    <section class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+      <div class="flex items-start mb-4">
+        <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xl font-bold mr-4 flex-shrink-0">1</div>
+        <div>
+          <h2 class="text-2xl font-bold text-emerald-700 mb-2">アカウント登録</h2>
+          <p class="text-gray-600">まずはアカウントを作成しましょう</p>
+        </div>
+      </div>
+      
+      <div class="ml-16">
+        <ol class="space-y-3 text-gray-700">
+          <li class="flex items-start">
+            <span class="text-emerald-600 font-bold mr-2">①</span>
+            <span>トップページの「今すぐ始める」または「新規登録」ボタンをクリック</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-600 font-bold mr-2">②</span>
+            <span>メールアドレス、ユーザー名、パスワードを入力</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-600 font-bold mr-2">③</span>
+            <span>登録完了後、マイページでプロフィール画像や自己紹介を設定できます</span>
+          </li>
+        </ol>
+        
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mt-4">
+          <p class="text-blue-800">
+            <strong>🔐 Googleアカウントでも登録可能:</strong> Googleログインを使えば、より簡単に登録できます
+          </p>
+        </div>
+        
+        <div class="mt-6">
+          <%= link_to new_user_registration_path, class: "inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors" do %>
+            アカウント登録はこちら →
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <!-- ステップ2: 商品を探す -->
+    <section class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+      <div class="flex items-start mb-4">
+        <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xl font-bold mr-4 flex-shrink-0">2</div>
+        <div>
+          <h2 class="text-2xl font-bold text-emerald-700 mb-2">抹茶スイーツを探す</h2>
+          <p class="text-gray-600">みんなのレビューから気になる商品を見つけよう</p>
+        </div>
+      </div>
+      
+      <div class="ml-16">
+        <h3 class="font-semibold text-emerald-600 mb-3">🔍 検索方法</h3>
+        <ul class="space-y-2 text-gray-700 mb-4">
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">▸</span>
+            <span><strong>オートコンプリート検索:</strong> 商品名を入力すると、リアルタイムで候補が表示されます</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">▸</span>
+            <span><strong>カテゴリー絞り込み:</strong> ケーキ、デザート、アイス、和菓子、ドリンク、パフェから選択</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">▸</span>
+            <span><strong>タグ検索:</strong> 商品に付けられたタグをクリックして、同じタグの商品を検索</span>
+          </li>
+        </ul>
+
+        <h3 class="font-semibold text-emerald-600 mb-3 mt-6">📊 商品一覧で確認できる情報</h3>
+        <ul class="space-y-2 text-gray-700 mb-4">
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">•</span>
+            <span><strong>濃さ表示:</strong> 🍵マークの数(1〜5)で抹茶の濃さが一目で分かります</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">•</span>
+            <span><strong>いいね数:</strong> ❤️マークで人気度を確認</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">•</span>
+            <span><strong>コメント数:</strong> 💬マークで他のユーザーの反応を確認</span>
+          </li>
+        </ul>
+
+        <div class="bg-emerald-50 p-4 rounded-lg">
+          <p class="text-emerald-800">
+            <strong>💡 ヒント:</strong> 商品詳細ページでは、レーダーチャートで5つの味覚評価を視覚的に確認できます
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ステップ3: 商品詳細を見る -->
+    <section class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+      <div class="flex items-start mb-4">
+        <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xl font-bold mr-4 flex-shrink-0">3</div>
+        <div>
+          <h2 class="text-2xl font-bold text-emerald-700 mb-2">商品詳細を確認する</h2>
+          <p class="text-gray-600">詳しい情報とレビューをチェック</p>
+        </div>
+      </div>
+      
+      <div class="ml-16">
+        <h3 class="font-semibold text-emerald-600 mb-3">📱 商品詳細ページで見られる情報</h3>
+        <ul class="space-y-2 text-gray-700 mb-4">
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">✓</span>
+            <span><strong>商品画像:</strong> 実際の商品写真</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">✓</span>
+            <span><strong>基本情報:</strong> 店舗名、価格、カテゴリ、タグ</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">✓</span>
+            <span><strong>レーダーチャート:</strong> 濃さ・甘さ・苦味・後味・見た目の5段階評価を視覚化</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">✓</span>
+            <span><strong>総合評価:</strong> ★で表示される平均スコア</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">✓</span>
+            <span><strong>レビューコメント:</strong> 投稿者の詳しい感想</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">✓</span>
+            <span><strong>店舗地図:</strong> 住所が登録されている場合、Googleマップで確認可能</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-emerald-500 mr-2">✓</span>
+            <span><strong>コメント欄:</strong> 他のユーザーとの交流</span>
+          </li>
+        </ul>
+
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded">
+          <p class="text-amber-800">
+            <strong>❤️ いいね機能:</strong> 気に入ったレビューには「いいね」で反応できます
+          </p>
+        </div>
+
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mt-3">
+          <p class="text-blue-800">
+            <strong>🐦 Xシェア機能:</strong> 商品をXでシェアして、抹茶好きの友人と情報交換できます
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ステップ4: 商品を投稿する -->
+    <section class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+      <div class="flex items-start mb-4">
+        <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xl font-bold mr-4 flex-shrink-0">4</div>
+        <div>
+          <h2 class="text-2xl font-bold text-emerald-700 mb-2">新しい商品を投稿する</h2>
+          <p class="text-gray-600">3ステップで簡単に投稿できます</p>
+        </div>
+      </div>
+      
+      <div class="ml-16">
+        <p class="text-gray-700 mb-4">
+          商品一覧ページの<strong>「＋ 新規投稿」</strong>ボタンから投稿を開始します。
+        </p>
+        
+        <h3 class="font-semibold text-emerald-600 mb-3">📝 投稿の流れ</h3>
+        
+        <div class="space-y-4">
+          <!-- ステップ1 -->
+          <div class="border-l-4 border-emerald-500 pl-4">
+            <h4 class="font-semibold text-gray-800 mb-2">
+              <span class="inline-block w-6 h-6 bg-emerald-500 text-white rounded-full text-center text-sm mr-2">1</span>
+              商品情報の入力
+            </h4>
+            <ul class="space-y-1 text-gray-700 text-sm ml-8">
+              <li>• 商品名 (必須)</li>
+              <li>• 店舗名 (必須)</li>
+              <li>• 店舗住所 (任意 - 地図表示に使用)</li>
+              <li>• カテゴリ (必須 - ケーキ/デザート/アイス/和菓子/ドリンク/パフェ/その他)</li>
+              <li>• 価格 (必須)</li>
+              <li>• タグ (任意 - カンマ区切りで複数登録可能)</li>
+            </ul>
+          </div>
+
+          <!-- ステップ2 -->
+          <div class="border-l-4 border-emerald-500 pl-4">
+            <h4 class="font-semibold text-gray-800 mb-2">
+              <span class="inline-block w-6 h-6 bg-emerald-500 text-white rounded-full text-center text-sm mr-2">2</span>
+              味覚評価
+            </h4>
+            <p class="text-gray-700 text-sm ml-8 mb-2">
+              各項目を★で5段階評価します:
+            </p>
+            <ul class="space-y-1 text-gray-700 text-sm ml-8">
+              <li>• <strong>濃さ:</strong> 抹茶の濃厚さ (1=薄い 〜 5=濃厚)</li>
+              <li>• <strong>甘さ:</strong> 甘味の強さ (1=控えめ 〜 5=とても甘い)</li>
+              <li>• <strong>苦味:</strong> 抹茶の苦味 (1=苦くない 〜 5=苦い)</li>
+              <li>• <strong>後味:</strong> 食後の余韻 (1=さっぱり 〜 5=濃厚)</li>
+              <li>• <strong>見た目:</strong> ビジュアルの美しさ (1=普通 〜 5=美しい)</li>
+            </ul>
+          </div>
+
+          <!-- ステップ3 -->
+          <div class="border-l-4 border-emerald-500 pl-4">
+            <h4 class="font-semibold text-gray-800 mb-2">
+              <span class="inline-block w-6 h-6 bg-emerald-500 text-white rounded-full text-center text-sm mr-2">3</span>
+              画像とコメント
+            </h4>
+            <ul class="space-y-1 text-gray-700 text-sm ml-8">
+              <li>• 商品画像をアップロード (任意)</li>
+              <li>• 自由にコメントを記入 (任意)</li>
+              <li>• 確認画面で内容をチェックして投稿</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded mt-4">
+          <p class="text-amber-800">
+            <strong>📸 写真のコツ:</strong> 自然光で撮影すると、抹茶の美しい色合いがより映えます
+          </p>
+        </div>
+
+        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded mt-3">
+          <p class="text-emerald-800">
+            <strong>✅ 確認画面:</strong> 投稿前に入力内容を確認できるので、間違いを防げます
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ステップ5: マイページを活用する -->
+    <section class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+      <div class="flex items-start mb-4">
+        <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xl font-bold mr-4 flex-shrink-0">5</div>
+        <div>
+          <h2 class="text-2xl font-bold text-emerald-700 mb-2">マイページを活用する</h2>
+          <p class="text-gray-600">あなたの抹茶遍歴を管理</p>
+        </div>
+      </div>
+      
+      <div class="ml-16">
+        <h3 class="font-semibold text-emerald-600 mb-3">👤 マイページでできること</h3>
+        
+        <div class="space-y-3">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+              <span class="text-xl mr-2">📝</span>
+              投稿一覧
+            </h4>
+            <p class="text-gray-700 text-sm">
+              あなたが投稿した全ての商品レビューを一覧で確認できます。編集や削除もここから行えます。
+            </p>
+          </div>
+
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+              <span class="text-xl mr-2">❤️</span>
+              いいね一覧
+            </h4>
+            <p class="text-gray-700 text-sm">
+              あなたが「いいね」した商品を一覧で確認できます。お気に入りの商品を簡単に見返すことができます。
+            </p>
+          </div>
+
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+              <span class="text-xl mr-2">⚙️</span>
+              プロフィール編集
+            </h4>
+            <p class="text-gray-700 text-sm">
+              プロフィール画像、ユーザー名、自己紹介などを編集できます。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ステップ6: ランキングをチェック -->
+    <section class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+      <div class="flex items-start mb-4">
+        <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xl font-bold mr-4 flex-shrink-0">6</div>
+        <div>
+          <h2 class="text-2xl font-bold text-emerald-700 mb-2">ランキングをチェック</h2>
+          <p class="text-gray-600">人気の抹茶スイーツを発見</p>
+        </div>
+      </div>
+      
+      <div class="ml-16">
+        <p class="text-gray-700 mb-4">
+          ヘッダーの<strong>「ランキング」</strong>から、いいね数の多い人気商品をチェックできます。
+        </p>
+        
+        <div class="bg-emerald-50 p-4 rounded-lg">
+          <p class="text-emerald-800">
+            <strong>🏆 ランキング機能:</strong> コミュニティで実際に評価された商品を発見できます
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- よくある質問 -->
+    <section class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+      <h2 class="text-2xl font-bold text-emerald-700 mb-6 flex items-center">
+        <span class="text-3xl mr-3">❓</span>
+        よくある質問
+      </h2>
+      
+      <div class="space-y-4">
+        <div class="border-b border-gray-200 pb-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Q. 利用料金はかかりますか?</h3>
+          <p class="text-gray-600">A. 完全無料でご利用いただけます。</p>
+        </div>
+        
+        <div class="border-b border-gray-200 pb-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Q. レビューは何件まで投稿できますか?</h3>
+          <p class="text-gray-600">A. 制限はありません。何件でも自由に投稿できます。</p>
+        </div>
+        
+        <div class="border-b border-gray-200 pb-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Q. 投稿した商品は編集・削除できますか?</h3>
+          <p class="text-gray-600">A. はい、商品詳細ページの編集・削除ボタンからいつでも変更可能です。ただし、自分が投稿した商品のみ編集・削除できます。</p>
+        </div>
+        
+        <div class="border-b border-gray-200 pb-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Q. 写真なしでも投稿できますか?</h3>
+          <p class="text-gray-600">A. もちろん可能です。写真は任意項目です。</p>
+        </div>
+
+        <div class="border-b border-gray-200 pb-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Q. タグは何個まで付けられますか?</h3>
+          <p class="text-gray-600">A. 制限はありませんが、カンマ区切りで複数のタグを付けることができます。例: 「チョコレート, 濃厚, おすすめ」</p>
+        </div>
+
+        <div class="border-b border-gray-200 pb-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Q. レーダーチャートとは何ですか?</h3>
+          <p class="text-gray-600">A. 濃さ・甘さ・苦味・後味・見た目の5つの評価を視覚的に表示したグラフです。自分の好みに合う商品を一目で判断できます。</p>
+        </div>
+
+        <div class="pb-4">
+          <h3 class="font-semibold text-gray-800 mb-2">Q. コメント機能は誰でも使えますか?</h3>
+          <p class="text-gray-600">A. はい、ログインしているユーザーなら誰でも商品詳細ページでコメントを投稿できます。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- コミュニティガイドライン -->
+    <section class="bg-white rounded-2xl p-8 shadow-sm mb-8">
+      <h2 class="text-2xl font-bold text-emerald-700 mb-4 flex items-center">
+        <span class="text-3xl mr-3">📋</span>
+        コミュニティガイドライン
+      </h2>
+      <p class="text-gray-700 mb-4">
+        快適なコミュニティを維持するため、以下のルールを守ってください。
+      </p>
+      <ul class="space-y-2 text-gray-700">
+        <li class="flex items-start">
+          <span class="text-emerald-600 mr-2">•</span>
+          <span>他のユーザーへの誹謗中傷や攻撃的な表現は禁止です</span>
+        </li>
+        <li class="flex items-start">
+          <span class="text-emerald-600 mr-2">•</span>
+          <span>正直で建設的なレビューを心がけましょう</span>
+        </li>
+        <li class="flex items-start">
+          <span class="text-emerald-600 mr-2">•</span>
+          <span>著作権を侵害する画像の投稿は控えてください</span>
+        </li>
+        <li class="flex items-start">
+          <span class="text-emerald-600 mr-2">•</span>
+          <span>スパムや広告目的の投稿は禁止です</span>
+        </li>
+        <li class="flex items-start">
+          <span class="text-emerald-600 mr-2">•</span>
+          <span>自分が実際に食べた商品についてのみレビューを投稿してください</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- CTA -->
+    <section class="text-center bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl p-12 text-white">
+      <h2 class="text-3xl font-bold mb-4">さあ、始めましょう!</h2>
+      <p class="text-xl mb-8 text-emerald-50">
+        あなたの抹茶体験を、みんなとシェアしませんか?
+      </p>
+      
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <%= link_to new_user_registration_path, class: "bg-white text-emerald-600 hover:bg-emerald-50 px-8 py-4 rounded-full text-lg font-bold transition-colors" do %>
+          無料で登録する
+        <% end %>
+        
+        <%= link_to products_path, class: "border-2 border-white text-white hover:bg-emerald-700 px-8 py-4 rounded-full text-lg font-bold transition-colors" do %>
+          商品を見る
+        <% end %>
+      </div>
+    </section>
+
+  </div>
+</div>
