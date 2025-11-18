@@ -143,7 +143,15 @@ Rails標準機能（session）: レビュー投稿時の確認画面を実装し
 **Tailwind CSS + daisyUI**: ユーティリティファーストCSS + コンポーネントライブラリを使用します。抹茶の緑色をベースにした和風モダンなデザインを実現します。
 
 ### 法的対応・問い合わせ
-**Action Mailer**: 問い合わせフォームのメール送信機能を実装します。利用規約・プライバシーポリシーは静的ページ（Pages Controller）で対応します。
+**Google Forms**: 問い合わせフォーム機能を実装します。利用規約・プライバシーポリシーは静的ページ（Pages Controller）で対応します。
+
+### 画像ストレージ
+**AWS S3**: 商品画像の保存・配信機能を実装します。
+Active Storageと連携し、本番環境での画像管理を最適化します。
+
+### 地図表示機能
+**Google Maps API**: 店舗所在地の地図表示機能を実装します。
+商品詳細ページで店舗の位置情報を視覚的に表示し、ユーザーの来店をサポートします。
 
 ## ■技術スタック
 
@@ -157,6 +165,7 @@ Rails標準機能（session）: レビュー投稿時の確認画面を実装し
 ### 主要Gem
 - **認証**: devise, omniauth-google-oauth2
 - **画像処理**: image_processing
+- **ファイルストレージ**: aws-sdk-s3
 - **URL生成**: friendly_id
 - **ページネーション**: kaminari
 - **国際化**: rails-i18n
@@ -166,6 +175,7 @@ Rails標準機能（session）: レビュー投稿時の確認画面を実装し
 ### インフラ・デプロイ
 - **開発環境**: Docker
 - **本番環境**: Render
+- **ストレージ**: AWS S3
 
 ## 画面遷移図
 [Figma画面遷移図](https://www.figma.com/design/Vs0OMb3eBeTmMkTjLxPpn6/%E5%8D%92%E6%A5%AD%E5%88%B6%E4%BD%9C%E7%94%A8%E7%94%BB%E9%9D%A2%E9%81%B7%E7%A7%BB%E5%9B%B3?node-id=0-1&t=i2k46Yp2AWzsNsos-1)

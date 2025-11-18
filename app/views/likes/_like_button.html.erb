@@ -26,9 +26,11 @@
     <% end %>
   <% else %>
     <!-- ログインしていないユーザー向け -->
-    <%= link_to new_user_session_path, 
-        class: "like-btn like-btn-inactive flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 transition-colors" do %>
-      <span class="like-heart #{size_classes}">🤍</span>
+    <%= button_to review_likes_path(review),
+        method: :post,
+        class: "like-btn like-btn-inactive flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-100 transition-colors",
+        data: { turbo: false } do %>
+      <span class="like-heart <%= size_classes %>">🤍</span>
       <span class="like-count font-semibold text-gray-700"><%= review.likes_count %></span>
     <% end %>
   <% end %>
