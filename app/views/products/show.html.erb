@@ -35,9 +35,9 @@
         <div class="w-full md:w-1/2 space-y-4">
           <!-- 商品画像 -->
           <% if @product.image.attached? %>
-            <%= image_tag @product.image, class: "w-full max-w-sm object-cover rounded shadow mb-4" %>
+            <%= image_tag @product.image, class: "w-full h-64 max-w-sm object-cover rounded shadow mb-4" %>
           <% else %>
-            <div class="w-full h-64 bg-gray-100 flex items-center justify-center rounded">No Image</div>
+            <div class="w-full max-w-sm h-64 bg-gray-100 flex items-center justify-center rounded">No Image</div>
           <% end %>
 
           <!-- 商品詳細情報 -->
@@ -168,7 +168,7 @@
 
             <!-- Xシェアボタン・いいねボタン -->
             <% if @review.present? %>
-              <div class="absolute bottom-5 right-0 flex items-center gap-3">
+              <div class="flex items-center gap-3 justify-end mt-4">
                 <!-- Xシェアボタン -->
                 <% 
                   share_url_encoded = CGI.escape(@share_url || '')
@@ -192,7 +192,7 @@
                 <%= render "likes/like_button", review: @review, size: "md" %>
               </div>
             <% else %>
-              <div class="absolute bottom-5 right-0">
+              <div class="flex justify-end mt-4">
                 <button class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-500 text-sm font-medium rounded-lg cursor-not-allowed" 
                         style="background-color: #d1d5db; color: #6b7280;" 
                         disabled>
