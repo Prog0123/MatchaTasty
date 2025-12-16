@@ -1,6 +1,6 @@
 # MatchaTasty 🍵
 
-<img src="app/assets/images/ogp.png" alt="MatchaTasty OGP" width="600">
+<img src="app/assets/images/og_default.png" alt="MatchaTasty" width="600">
 
 抹茶スイーツ特化型レビュー・発見サービス
 
